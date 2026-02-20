@@ -27,6 +27,19 @@ The file is automatically updated by GitHub Actions.
 | Output file | `llms.txt` (repository root) |
 | Schedule | Daily at **09:00 KST** (`00:00 UTC`) |
 
+## Agent Guide
+
+Give this URL to your agent:
+
+- `https://raw.githubusercontent.com/heyman333/tanstack-query-llms-txt/refs/heads/main/llms.txt`
+
+Example instruction:
+
+```text
+Use this llms.txt as the TanStack Query React reference:
+https://raw.githubusercontent.com/heyman333/tanstack-query-llms-txt/refs/heads/main/llms.txt
+```
+
 ## Schedule
 
 - Runs every day at **09:00 KST** (`00:00 UTC`).

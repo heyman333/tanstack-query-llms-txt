@@ -17,6 +17,19 @@ English version: [README.md](README.md)
 | 생성 파일 | `llms.txt` (저장소 루트) |
 | 실행 스케줄 | 매일 **오전 9시(KST)** (`00:00 UTC`) |
 
+## 에이전트 가이드
+
+아래 URL을 에이전트에게 알려주면 됩니다.
+
+- `https://raw.githubusercontent.com/heyman333/tanstack-query-llms-txt/refs/heads/main/llms.txt`
+
+예시 프롬프트:
+
+```text
+TanStack Query React 참고 문서로 아래 llms.txt를 사용해.
+https://raw.githubusercontent.com/heyman333/tanstack-query-llms-txt/refs/heads/main/llms.txt
+```
+
 ## 실행 스케줄
 
 - 매일 **오전 9시(KST)** 에 실행됩니다 (`00:00 UTC`).
