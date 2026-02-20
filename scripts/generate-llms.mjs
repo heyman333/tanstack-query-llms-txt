@@ -44,7 +44,7 @@ async function main() {
       path,
       rawUrl,
       sourceUrl,
-      content: normalizeNewlines(content).trimEnd(),
+      content: rewriteRelativeLinks(normalizeNewlines(content).trimEnd(), path),
     };
   });
 
@@ -116,6 +116,105 @@ function buildLlmsTxt(docs) {
   }
 
   return `${lines.join("\n").trim()}\n`;
+}
+
+function rewriteRelativeLinks(content, docPath) {
+  const lines = content.split("\n");
+  let inFence = false;
+
+  return lines
+    .map((line) => {
+      const trimmedStart = line.trimStart();
+      if (/^(```|~~~)/.test(trimmedStart)) {
+        inFence = !inFence;
+        return line;
+      }
+
+      if (inFence) {
+        return line;
+      }
+
+      let rewritten = line.replace(/(!?\[[^\]\n]+\])\(([^)\n]+)\)/g, (full, label, rawTarget) => {
+        const normalizedTarget = normalizeMarkdownTarget(rawTarget, docPath);
+        return `${label}(${normalizedTarget})`;
+      });
+
+      rewritten = rewritten.replace(/^(\s*\[[^\]]+\]:\s*)(\S+)(.*)$/g, (full, prefix, target, suffix) => {
+        return `${prefix}${absolutizeDocLink(target, docPath)}${suffix}`;
+      });
+
+      rewritten = rewritten.replace(/(href|src)=(["'])([^"']+)\2/g, (full, attr, quote, target) => {
+        return `${attr}=${quote}${absolutizeDocLink(target, docPath)}${quote}`;
+      });
+
+      return rewritten;
+    })
+    .join("\n");
+}
+
+function normalizeMarkdownTarget(rawTarget, docPath) {
+  const leadingSpace = rawTarget.match(/^\s*/)?.[0] ?? "";
+  const trailingSpace = rawTarget.match(/\s*$/)?.[0] ?? "";
+  const core = rawTarget.slice(leadingSpace.length, rawTarget.length - trailingSpace.length);
+
+  if (!core) {
+    return rawTarget;
+  }
+
+  let target = core;
+  let suffix = "";
+  let useAngleBrackets = false;
+
+  if (core.startsWith("<")) {
+    const closeIndex = core.indexOf(">");
+    if (closeIndex !== -1) {
+      useAngleBrackets = true;
+      target = core.slice(1, closeIndex);
+      suffix = core.slice(closeIndex + 1);
+    }
+  } else {
+    const firstWhitespaceIndex = core.search(/\s/);
+    if (firstWhitespaceIndex !== -1) {
+      target = core.slice(0, firstWhitespaceIndex);
+      suffix = core.slice(firstWhitespaceIndex);
+    }
+  }
+
+  const absoluteTarget = absolutizeDocLink(target, docPath);
+  const rebuiltCore = useAngleBrackets ? `<${absoluteTarget}>${suffix}` : `${absoluteTarget}${suffix}`;
+  return `${leadingSpace}${rebuiltCore}${trailingSpace}`;
+}
+
+function absolutizeDocLink(target, docPath) {
+  if (!target) {
+    return target;
+  }
+
+  if (isSpecialLink(target)) {
+    return target;
+  }
+
+  if (target.startsWith("#")) {
+    return `${buildSourceUrl(docPath)}${target}`;
+  }
+
+  if (target.startsWith("/")) {
+    return `https://github.com/${CONFIG.owner}/${CONFIG.repo}/blob/${CONFIG.branch}${target}`;
+  }
+
+  try {
+    return new URL(target, buildSourceUrl(docPath)).toString();
+  } catch {
+    return target;
+  }
+}
+
+function isSpecialLink(target) {
+  if (target.startsWith("//")) {
+    return true;
+  }
+
+  return /^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(target);
 }
 
 async function fetchJson(url, headers) {
