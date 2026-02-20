@@ -3,6 +3,10 @@
 This project reads TanStack Query React docs (`docs/framework/react`) and generates `llms.txt` at the repository root.  
 The file is automatically updated by GitHub Actions.
 
+## Schedule
+
+- Runs every day at **09:00 KST** (`00:00 UTC`).
+
 ## How it works
 
 1. `scripts/generate-llms.mjs` fetches the docs tree from GitHub.

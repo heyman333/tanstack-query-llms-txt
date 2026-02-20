@@ -3,6 +3,10 @@
 이 프로젝트는 TanStack Query React 문서(`docs/framework/react`)를 읽어 저장소 루트에 `llms.txt`를 생성합니다.  
 생성된 파일은 GitHub Actions로 자동 갱신됩니다.
 
+## 실행 스케줄
+
+- 매일 **오전 9시(KST)** 에 실행됩니다 (`00:00 UTC`).
+
 ## 동작 방식
 
 1. `scripts/generate-llms.mjs`가 GitHub에서 문서 트리를 조회합니다.
