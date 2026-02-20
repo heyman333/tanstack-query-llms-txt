@@ -23,11 +23,12 @@ jobs:
       - name: Generate llms.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OUTPUT_FILE: llms.txt
         run: npm run generate:llms
 
       - name: Commit updated llms.txt
         run: |
-          if git diff --quiet -- llms.txt; then
+          if [ -z "$(git status --porcelain -- llms.txt)" ]; then
             echo "No changes in llms.txt"
             exit 0
           fi
