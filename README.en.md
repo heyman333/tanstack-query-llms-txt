@@ -1,0 +1,28 @@
+# tanstack-query-llms-txt
+
+This project reads TanStack Query React docs (`docs/framework/react`) and generates `llms.txt` at the repository root.  
+The file is automatically updated by GitHub Actions.
+
+## How it works
+
+1. `scripts/generate-llms.mjs` fetches the docs tree from GitHub.
+2. It collects Markdown files (`.md`, `.mdx`) and builds `llms.txt`.
+3. `.github/workflows/generate-llms.yml` runs on schedule or manually, then commits `llms.txt` if changed.
+
+## Output location
+
+- Repository: `https://github.com/heyman333/tanstack-query-llms-txt`
+- Branch: `main`
+- File: `llms.txt` (repository root)
+
+When the `Generate llms.txt` action succeeds, `llms.txt` is committed to the root of `main`.
+
+## Run locally
+
+```bash
+npm run generate:llms
+```
+
+Generated file:
+
+- `llms.txt` (repository root)
