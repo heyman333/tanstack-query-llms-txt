@@ -1,0 +1,12 @@
+{
+  "name": "tanstck-query-llms-txt-auto-update",
+  "version": "1.0.0",
+  "description": "Generate llms.txt from TanStack Query React docs",
+  "main": "index.js",
+  "scripts": {
+    "generate:llms": "node scripts/generate-llms.mjs",
+    "test": "echo \"No tests configured\""
+  },
+  "author": "",
+  "license": "ISC"
+}
