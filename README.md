@@ -1,9 +1,31 @@
-# tanstack-query-llms-txt
+<p align="center">
+  <img src="assets/llm-logo.png" alt="LLM logo" width="220" />
+</p>
 
-- Korean version: [README.ko.md](README.ko.md)
+<h1 align="center">tanstack-query-llms-txt</h1>
+
+<p align="center">
+  Generate <code>llms.txt</code> from TanStack Query React docs and keep it updated automatically.
+</p>
+
+<p align="center">
+  <a href="README.ko.md"><strong>한국어 문서</strong></a>
+</p>
+
+<p align="center">
+  <img src="https://github.com/heyman333/tanstack-query-llms-txt/actions/workflows/generate-llms.yml/badge.svg" alt="Generate llms.txt workflow status" />
+</p>
+
+## Overview
 
 This project reads TanStack Query React docs (`docs/framework/react`) and generates `llms.txt` at the repository root.  
 The file is automatically updated by GitHub Actions.
+
+| Item | Value |
+| --- | --- |
+| Source docs | `TanStack/query/docs/framework/react` |
+| Output file | `llms.txt` (repository root) |
+| Schedule | Daily at **09:00 KST** (`00:00 UTC`) |
 
 ## Schedule
 

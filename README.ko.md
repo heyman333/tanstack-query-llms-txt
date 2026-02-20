@@ -1,7 +1,21 @@
+<p align="center">
+  <img src="assets/llm-logo.png" alt="LLM 로고" width="220" />
+</p>
+
 # tanstack-query-llms-txt
+
+English version: [README.md](README.md)
 
 이 프로젝트는 TanStack Query React 문서(`docs/framework/react`)를 읽어 저장소 루트에 `llms.txt`를 생성합니다.  
 생성된 파일은 GitHub Actions로 자동 갱신됩니다.
+
+## 개요
+
+| 항목 | 값 |
+| --- | --- |
+| 소스 문서 | `TanStack/query/docs/framework/react` |
+| 생성 파일 | `llms.txt` (저장소 루트) |
+| 실행 스케줄 | 매일 **오전 9시(KST)** (`00:00 UTC`) |
 
 ## 실행 스케줄
 
