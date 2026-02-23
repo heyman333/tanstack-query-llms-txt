@@ -7820,13 +7820,19 @@ or
 bun add @tanstack/react-query
 ```
 
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/installation.md# 'Compatibility'
+
 React Query is compatible with React v18+ and works with ReactDOM and React Native.
 
 > Wanna give it a spin before you download? Try out the [simple](https://github.com/TanStack/query/blob/main/docs/framework/react/examples/simple) or [basic](https://github.com/TanStack/query/blob/main/docs/framework/react/examples/basic) examples!
 
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/installation.md# 'Compatibility'
+
 ### CDN
 
 If you're not using a module bundler or package manager, you can also use this library via an ESM-compatible CDN such as [ESM.sh](https://esm.sh/). Simply add a `<script type="module">` tag to the bottom of your HTML file:
+
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/installation.md# 'CDNExample'
 
 ```html
 <script type="module">
@@ -7837,6 +7843,8 @@ If you're not using a module bundler or package manager, you can also use this l
 ```
 
 > You can find instructions on how to use React without JSX [here](https://react.dev/reference/react/createElement#creating-an-element-without-jsx).
+
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/installation.md# 'CDNExample'
 
 ### Requirements
 
