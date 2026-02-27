@@ -1200,7 +1200,7 @@ Let's assume we are using the default `gcTime` of **5 minutes** and the default 
 - A new instance of `useQuery({ queryKey: ['todos'], queryFn: fetchTodos })` mounts.
   - Since no other queries have been made with the `['todos']` query key, this query will show a hard loading state and make a network request to fetch the data.
   - When the network request has completed, the returned data will be cached under the `['todos']` key.
-  - The hook will mark the data as stale after the configured `staleTime` (defaults to `0`, or immediately).
+  - The data will be marked as stale after the configured `staleTime` (defaults to `0`, or immediately).
 - A second instance of `useQuery({ queryKey: ['todos'], queryFn: fetchTodos })` mounts elsewhere.
   - Since the cache already has data for the `['todos']` key from the first query, that data is immediately returned from the cache.
   - The new instance triggers a new network request using its query function.
@@ -1699,9 +1699,13 @@ Out of the box, TanStack Query is configured with **aggressive but sane** defaul
 
   > To change this, you can alter the default `retry` and `retryDelay` options for queries to something other than `3` and the default exponential backoff function.
 
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/important-defaults.md# 'StructuralSharing'
+
 - Query results by default are **structurally shared to detect if data has actually changed** and if not, **the data reference remains unchanged** to better help with value stabilization with regards to useMemo and useCallback. If this concept sounds foreign, then don't worry about it! 99.9% of the time you will not need to disable this and it makes your app more performant at zero cost to you.
 
-  > Structural sharing only works with JSON-compatible values, any other value types will always be considered as changed. If you are seeing performance issues because of large responses for example, you can disable this feature with the `config.structuralSharing` flag. If you are dealing with non-JSON compatible values in your query responses and still want to detect if data has changed or not, you can provide your own custom function as `config.structuralSharing` to compute a value from the old and new responses, retaining references as required.
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/important-defaults.md# 'StructuralSharing'
+
+> Structural sharing only works with JSON-compatible values, any other value types will always be considered as changed. If you are seeing performance issues because of large responses for example, you can disable this feature with the `config.structuralSharing` flag. If you are dealing with non-JSON compatible values in your query responses and still want to detect if data has changed or not, you can provide your own custom function as `config.structuralSharing` to compute a value from the old and new responses, retaining references as required.
 
 [//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/important-defaults.md# 'Materials'
 
@@ -4237,10 +4241,13 @@ queryClient.resumePausedMutations()
 ```
 
 [//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/mutations.md# 'Example10'
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/mutations.md# 'PersistOfflineIntro'
 
 ### Persisting Offline mutations
 
 If you persist offline mutations with the [persistQueryClient plugin](https://github.com/TanStack/query/blob/main/docs/framework/react/plugins/persistQueryClient.md), mutations cannot be resumed when the page is reloaded unless you provide a default mutation function.
+
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/mutations.md# 'PersistOfflineIntro'
 
 This is a technical limitation. When persisting to an external storage, only the state of mutations is persisted, as functions cannot be serialized. After hydration, the component that triggers the mutation might not be mounted, so calling `resumePausedMutations` might yield an error: `No mutationFn found`.
 
@@ -4282,8 +4289,11 @@ export default function App() {
 ```
 
 [//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/mutations.md# 'Example11'
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/mutations.md# 'OfflineExampleLink'
 
 We also have an extensive [offline example](https://github.com/TanStack/query/blob/main/docs/framework/react/examples/offline) that covers both queries and mutations.
+
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/mutations.md# 'OfflineExampleLink'
 
 ## Mutation Scopes
 
@@ -4700,9 +4710,11 @@ function App () {
 If the number of queries you need to execute is changing from render to render, you cannot use manual querying since that would violate the rules of hooks. Instead, TanStack Query provides a `useQueries` hook, which you can use to dynamically execute as many queries in parallel as you'd like.
 
 [//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/parallel-queries.md# 'DynamicParallelIntro'
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/parallel-queries.md# 'DynamicParallelDescription'
 
 `useQueries` accepts an **options object** with a **queries key** whose value is an **array of query objects**. It returns an **array of query results**:
 
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/parallel-queries.md# 'DynamicParallelDescription'
 [//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/parallel-queries.md# 'Example2'
 
 ```tsx
@@ -5282,7 +5294,11 @@ title: Queries
 
 A query is a declarative dependency on an asynchronous source of data that is tied to a **unique key**. A query can be used with any Promise based method (including GET and POST methods) to fetch data from a server. If your method modifies data on the server, we recommend using [Mutations](https://github.com/TanStack/query/blob/main/docs/framework/react/guides/mutations.md) instead.
 
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/queries.md# 'SubscribeDescription'
+
 To subscribe to a query in your components or custom hooks, call the `useQuery` hook with at least:
+
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/queries.md# 'SubscribeDescription'
 
 - A **unique key for the query**
 - A function that returns a promise that:
@@ -5633,7 +5649,11 @@ A cancel options object supports the following properties:
 
 ## Limitations
 
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/query-cancellation.md# 'Limitations'
+
 Cancellation does not work when working with `Suspense` hooks: `useSuspenseQuery`, `useSuspenseQueries` and `useSuspenseInfiniteQuery`.
+
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/query-cancellation.md# 'Limitations'
 
 ### docs/framework/react/guides/query-functions.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/query-functions.md
@@ -6042,8 +6062,11 @@ queryClient.setQueryData(groupOptions(42).queryKey, newGroups)
 
 For Infinite Queries, a separate [`infiniteQueryOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/infiniteQueryOptions.md) helper is available.
 
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/query-options.md# 'SelectDescription'
+
 You can still override some options at the component level. A very common and useful pattern is to create per-component [`select`](https://github.com/TanStack/query/blob/main/docs/framework/react/guides/render-optimizations.md#select) functions:
 
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/query-options.md# 'SelectDescription'
 [//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/query-options.md# 'Example2'
 
 ```ts
@@ -6265,7 +6288,11 @@ The [Prefetching & Router Integration guide](https://github.com/TanStack/query/b
 
 The [Server Rendering & Hydration guide](https://github.com/TanStack/query/blob/main/docs/framework/react/guides/ssr.md) teaches you how to prefetch data on the server and pass that data down to the client so you don't have to fetch it again.
 
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/request-waterfalls.md# 'AdvancedSSRLink'
+
 The [Advanced Server Rendering guide](https://github.com/TanStack/query/blob/main/docs/framework/react/guides/advanced-ssr.md) further teaches you how to apply these patterns to Server Components and Streaming Server Rendering.
+
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/request-waterfalls.md# 'AdvancedSSRLink'
 
 ## What is a Request Waterfall?
 
@@ -6321,6 +6348,8 @@ With this as a basis, let's look at a few different patterns that can lead to Re
 
 When a single component first fetches one query, and then another, that's a request waterfall. This can happen when the second query is a [Dependent Query](https://github.com/TanStack/query/blob/main/docs/framework/react/guides/dependent-queries.md), that is, it depends on data from the first query when fetching:
 
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/request-waterfalls.md# 'DependentExample'
+
 ```tsx
 // Get the user
 const { data: user } = useQuery({
@@ -6343,9 +6372,16 @@ const {
 })
 ```
 
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/request-waterfalls.md# 'DependentExample'
+
 While not always feasible, for optimal performance it's better to restructure your API so you can fetch both of these in a single query. In the example above, instead of first fetching `getUserByEmail` to be able to `getProjectsByUser`, introducing a new `getProjectsByUserEmail` query would flatten the waterfall.
 
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/request-waterfalls.md# 'ServerComponentsNote1'
+
 > Another way to mitigate dependent queries without restructuring your API is to move the waterfall to the server where latency is lower. This is the idea behind Server Components which are covered in the [Advanced Server Rendering guide](https://github.com/TanStack/query/blob/main/docs/framework/react/guides/advanced-ssr.md).
+
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/request-waterfalls.md# 'ServerComponentsNote1'
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/request-waterfalls.md# 'SuspenseSerial'
 
 Another example of serial queries is when you use React Query with Suspense:
 
@@ -6376,13 +6412,21 @@ const [usersQuery, teamsQuery, projectsQuery] = useSuspenseQueries({
 })
 ```
 
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/request-waterfalls.md# 'SuspenseSerial'
+
 ### Nested Component Waterfalls
 
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/request-waterfalls.md# 'NestedIntro'
+
 Nested Component Waterfalls is when both a parent and a child component contains queries, and the parent does not render the child until its query is done. This can happen both with `useQuery` and `useSuspenseQuery`.
+
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/request-waterfalls.md# 'NestedIntro'
 
 If the child renders conditionally based on the data in the parent, or if the child relies on some part of the result being passed down as a prop from the parent to make its query, we have a _dependent_ nested component waterfall.
 
 Let's first look at an example where the child is **not** dependent on the parent.
+
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/request-waterfalls.md# 'NestedExample'
 
 ```tsx
 function Article({ id }) {
@@ -6415,7 +6459,11 @@ function Comments({ id }) {
 }
 ```
 
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/request-waterfalls.md# 'NestedExample'
+
 Note that while `<Comments>` takes a prop `id` from the parent, that id is already available when the `<Article>` renders so there is no reason we could not fetch the comments at the same time as the article. In real world applications, the child might be nested far below the parent and these kinds of waterfalls are often trickier to spot and fix, but for our example, one way to flatten the waterfall would be to hoist the comments query to the parent instead:
+
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/request-waterfalls.md# 'NestedHoistedExample'
 
 ```tsx
 function Article({ id }) {
@@ -6447,11 +6495,18 @@ function Article({ id }) {
 }
 ```
 
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/request-waterfalls.md# 'NestedHoistedExample'
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/request-waterfalls.md# 'NestedHoistedOutro'
+
 The two queries will now fetch in parallel. Note that if you are using suspense, you'd want to combine these two queries into a single `useSuspenseQueries` instead.
+
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/request-waterfalls.md# 'NestedHoistedOutro'
 
 Another way to flatten this waterfall would be to prefetch the comments in the `<Article>` component, or prefetch both of these queries at the router level on page load or page navigation, read more about this in the [Prefetching & Router Integration guide](https://github.com/TanStack/query/blob/main/docs/framework/react/guides/prefetching.md).
 
 Next, let's look at a _Dependent Nested Component Waterfall_.
+
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/request-waterfalls.md# 'DependentNestedExample'
 
 ```tsx
 function Feed() {
@@ -6487,6 +6542,8 @@ function GraphFeedItem({ feedItem }) {
 }
 ```
 
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/request-waterfalls.md# 'DependentNestedExample'
+
 The second query `getGraphDataById` is dependent on its parent in two different ways. First of all, it doesn't ever happen unless the `feedItem` is a graph, and second, it needs an `id` from the parent.
 
 ```
@@ -6494,7 +6551,11 @@ The second query `getGraphDataById` is dependent on its parent in two different 
 2.   |> getGraphDataById()
 ```
 
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/request-waterfalls.md# 'ServerComponentsNote2'
+
 In this example, we can't trivially flatten the waterfall by just hoisting the query to the parent, or even adding prefetching. Just like the dependent query example at the beginning of this guide, one option is to refactor our API to include the graph data in the `getFeed` query. Another more advanced solution is to leverage Server Components to move the waterfall to the server where latency is lower (read more about this in the [Advanced Server Rendering guide](https://github.com/TanStack/query/blob/main/docs/framework/react/guides/advanced-ssr.md)) but note that this can be a very big architectural change.
+
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/request-waterfalls.md# 'ServerComponentsNote2'
 
 You can have good performance even with a few query waterfalls here and there, just know they are a common performance concern and be mindful about them. An especially insidious version is when Code Splitting is involved, let's take a look at this next.
 
@@ -6577,12 +6638,16 @@ In the code split case, it might actually help to hoist the `getGraphDataById` q
 
 This is very much a tradeoff however. You are now including the data fetching code for `getGraphDataById` in the same bundle as `<Feed>`, so evaluate what is best for your case. Read more about how to do this in the [Prefetching & Router Integration guide](https://github.com/TanStack/query/blob/main/docs/framework/react/guides/prefetching.md).
 
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/request-waterfalls.md# 'ServerComponentsNote3'
+
 > The tradeoff between:
 >
 > - Include all data fetching code in the main bundle, even if we seldom use it
 > - Put the data fetching code in the code split bundle, but with a request waterfall
 >
 > is not great and has been one of the motivations for Server Components. With Server Components, it's possible to avoid both, read more about how this applies to React Query in the [Advanced Server Rendering guide](https://github.com/TanStack/query/blob/main/docs/framework/react/guides/advanced-ssr.md).
+
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/request-waterfalls.md# 'ServerComponentsNote3'
 
 ## Summary and takeaways
 
@@ -8317,6 +8382,21 @@ The filter object supports the following properties:
 For this function to work, your storage must expose `entries` method that would return a `key-value tuple array`.  
 For example `Object.entries(localStorage)` for `localStorage` or `entries` from `idb-keyval`.
 
+### `removeQueries(filters): Promise<void>`
+
+When using `queryClient.removeQueries`, the data remains in the persister and needs to be removed separately.
+This function can be used to remove queries that are currently stored by persister.
+
+The filter object supports the following properties:
+
+- `queryKey?: QueryKey`
+  - Set this property to define a query key to match on.
+- `exact?: boolean`
+  - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed.
+
+For this function to work, your storage must expose `entries` method that would return a `key-value tuple array`.  
+For example `Object.entries(localStorage)` for `localStorage` or `entries` from `idb-keyval`.
+
 ## API
 
 ### `experimental_createQueryPersister`
@@ -8988,9 +9068,23 @@ import { onlineManager } from '@tanstack/react-query'
 import * as Network from 'expo-network'
 
 onlineManager.setEventListener((setOnline) => {
+  let initialised = false
+
   const eventSubscription = Network.addNetworkStateListener((state) => {
+    initialised = true
     setOnline(!!state.isConnected)
   })
+
+  Network.getNetworkStateAsync()
+    .then((state) => {
+      if (!initialised) {
+        setOnline(!!state.isConnected)
+      }
+    })
+    .catch(() => {
+      // getNetworkStateAsync can reject on some platforms/SDK versions
+    })
+
   return eventSubscription.remove
 })
 ```
