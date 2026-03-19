@@ -164,8 +164,8 @@ Feature/Capability Key:
 
 [bpl-react-query]: https://bundlephobia.com/result?p=@tanstack/react-query
 [bp-react-query]: https://badgen.net/bundlephobia/minzip/@tanstack/react-query?label=💾
-[gh-react-query]: https://github.com/tannerlinsley/react-query
-[stars-react-query]: https://img.shields.io/github/stars/tannerlinsley/react-query?label=%F0%9F%8C%9F
+[gh-react-query]: https://github.com/TanStack/query
+[stars-react-query]: https://img.shields.io/github/stars/TanStack/query?label=%F0%9F%8C%9F
 [swr]: https://github.com/vercel/swr
 [bp-swr]: https://badgen.net/bundlephobia/minzip/swr?label=💾
 [gh-swr]: https://github.com/vercel/swr
@@ -3192,7 +3192,7 @@ The `MutationCacheNotifyEvent` uses the same types as the `QueryCacheNotifyEvent
 
 ### Separate hydration exports have been removed
 
-With version [3.22.0](https://github.com/tannerlinsley/react-query/releases/tag/v3.22.0), hydration utilities moved into the React Query core. With v3, you could still use the old exports from `react-query/hydration`, but these exports have been removed with v4.
+With version [3.22.0](https://github.com/TanStack/query/releases/tag/v3.22.0), hydration utilities moved into the React Query core. With v3, you could still use the old exports from `react-query/hydration`, but these exports have been removed with v4.
 
 ```tsx
 - import { dehydrate, hydrate, useHydrate, Hydrate } from 'react-query/hydration' // [!code --]
@@ -3256,7 +3256,7 @@ With v4, React Query introduces a new `networkMode` to tackle all these issues. 
 
 ### Tracked Queries per default
 
-React Query defaults to "tracking" query properties, which should give you a nice boost in render optimization. The feature has existed since [v3.6.0](https://github.com/tannerlinsley/react-query/releases/tag/v3.6.0) and has now become the default behavior with v4.
+React Query defaults to "tracking" query properties, which should give you a nice boost in render optimization. The feature has existed since [v3.6.0](https://github.com/TanStack/query/releases/tag/v3.6.0) and has now become the default behavior with v4.
 
 ### Bailing out of updates with setQueryData
 
