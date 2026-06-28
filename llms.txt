@@ -209,9 +209,9 @@ When you begin your React Query journey, you'll want these devtools by your side
 
 > For Chrome, Firefox, and Edge users: Third-party browser extensions are available for debugging TanStack Query directly in browser DevTools. These provide the same functionality as the framework-specific devtools packages:
 >
-> - <img alt="Chrome logo" src="https://www.google.com/chrome/static/images/chrome-logo.svg" width="16" height="16" class="inline mr-1 not-prose" /> [Devtools for Chrome](https://chromewebstore.google.com/detail/tanstack-query-devtools/annajfchloimdhceglpgglpeepfghfai)
-> - <img alt="Firefox logo" src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Firefox_logo%2C_2019.svg" width="16" height="16" class="inline mr-1 not-prose" /> [Devtools for Firefox](https://addons.mozilla.org/en-US/firefox/addon/tanstack-query-devtools/)
-> - <img alt="Edge logo" src="https://upload.wikimedia.org/wikipedia/commons/9/98/Microsoft_Edge_logo_%282019%29.svg" width="16" height="16" class="inline mr-1 not-prose" /> [Devtools for Edge](https://microsoftedge.microsoft.com/addons/detail/tanstack-query-devtools/edmdpkgkacmjopodhfolmphdenmddobj)
+> - <img alt="Chrome logo" src="https://www.google.com/chrome/static/images/chrome-logo.svg" width="16" height="16" class="inline mr-1 not-prose" /> <a href="https://chromewebstore.google.com/detail/tanstack-query-devtools/annajfchloimdhceglpgglpeepfghfai">Devtools for Chrome</a>
+> - <img alt="Firefox logo" src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Firefox_logo%2C_2019.svg" width="16" height="16" class="inline mr-1 not-prose" /> <a href="https://addons.mozilla.org/en-US/firefox/addon/tanstack-query-devtools/">Devtools for Firefox</a>
+> - <img alt="Edge logo" src="https://upload.wikimedia.org/wikipedia/commons/9/98/Microsoft_Edge_logo_%282019%29.svg" width="16" height="16" class="inline mr-1 not-prose" /> <a href="https://microsoftedge.microsoft.com/addons/detail/tanstack-query-devtools/edmdpkgkacmjopodhfolmphdenmddobj">Devtools for Edge</a>
 
 > For React Native users: A third-party native macOS app is available for debugging React Query in ANY js-based application. Monitor queries across devices in real-time. Check it out here: [rn-better-dev-tools](https://github.com/LovesWorking/rn-better-dev-tools)
 
@@ -4740,6 +4740,11 @@ function App({ users }) {
 ```
 
 [//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/parallel-queries.md# 'Example2'
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/parallel-queries.md# 'TypeScriptSelect'
+
+> When using TypeScript, an inline `select` written on a query object passed to `useQueries` can't infer its `data` argument from that same object's `queryFn` — it falls back to `unknown`. Annotate the `select` parameter explicitly, or define the query with the [`queryOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/queryOptions.md) helper, to keep type inference. See [this known limitation](https://github.com/TanStack/query/issues/6556).
+
+[//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/parallel-queries.md# 'TypeScriptSelect'
 
 ### docs/framework/react/guides/placeholder-query-data.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/placeholder-query-data.md
@@ -8012,6 +8017,12 @@ or
 bun add @tanstack/react-query
 ```
 
+or
+
+```bash
+deno add @tanstack/react-query
+```
+
 [//]: https://github.com/TanStack/query/blob/main/docs/framework/react/installation.md# 'Compatibility'
 
 React Query is compatible with React v18+ and works with ReactDOM and React Native.
@@ -10126,6 +10137,84 @@ The `combine` function will only re-run if:
 
 This means that an inlined `combine` function, as shown above, will run on every render. To avoid this, you can wrap the `combine` function in `useCallback`, or extract it to a stable function reference if it doesn't have any dependencies.
 
+## TypeScript: typing the `select` option
+
+Unlike `useQuery`, `useQueries` cannot infer the `data` argument of an _inline_ `select` from its sibling `queryFn`. Because `useQueries` infers the type of the whole `queries` array at once, the `select` parameter of a query object written inline cannot be contextually typed from that same object's `queryFn`, so it falls back to `unknown`. This is a [known TypeScript limitation](https://github.com/TanStack/query/issues/6556).
+
+```tsx
+useQueries({
+  queries: [
+    {
+      queryKey: ['post', 1],
+      queryFn: () => fetchPost(1),
+      // ❌ `data` is `unknown` here
+      select: (data) => data.title,
+    },
+  ],
+})
+```
+
+There are two supported workarounds:
+
+1. Annotate the `select` parameter explicitly:
+
+```tsx
+useQueries({
+  queries: [
+    {
+      queryKey: ['post', 1],
+      queryFn: () => fetchPost(1),
+      // ✅ `data` is `Post`
+      select: (data: Post) => data.title,
+    },
+  ],
+})
+```
+
+2. Define the query with the [`queryOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/queryOptions.md) helper, which resolves its types in a single object _before_ it reaches `useQueries`:
+
+```tsx
+const postOptions = (id: number) =>
+  queryOptions({
+    queryKey: ['post', id],
+    queryFn: () => fetchPost(id),
+    // ✅ `data` is `Post`
+    select: (data) => data.title,
+  })
+
+useQueries({ queries: [postOptions(1), postOptions(2)] })
+```
+
+The same limitation applies when you spread a `queryOptions` result to override its `select` inline — the overriding `select` still falls back to `unknown`:
+
+```tsx
+useQueries({
+  queries: [
+    {
+      ...postOptions(1),
+      // ❌ `data` is `unknown` here
+      select: (data) => data.title,
+    },
+  ],
+})
+```
+
+Wrap the spread in `queryOptions` again so the override is resolved before it reaches `useQueries`:
+
+```tsx
+useQueries({
+  queries: [
+    queryOptions({
+      ...postOptions(1),
+      // ✅ `data` is `Post`
+      select: (data) => data.title,
+    }),
+  ],
+})
+```
+
+The same applies to [`useSuspenseQueries`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/useSuspenseQueries.md).
+
 ### docs/framework/react/reference/useQuery.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/reference/useQuery.md
 RAW_URL: https://raw.githubusercontent.com/TanStack/query/main/docs/framework/react/reference/useQuery.md
@@ -10502,6 +10591,8 @@ The same as for [useQueries](https://github.com/TanStack/query/blob/main/docs/fr
 - `throwOnError`
 - `enabled`
 - `placeholderData`
+
+> The [`select` typing caveat](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/useQueries.md#typescript-typing-the-select-option) for `useQueries` applies here as well: annotate the `select` parameter or use the [`queryOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/queryOptions.md) helper to keep type inference.
 
 **Returns**
 
