@@ -7387,7 +7387,6 @@ React Query can also be used with React's Suspense for Data Fetching APIs. For t
 - [useSuspenseQuery](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/useSuspenseQuery.md)
 - [useSuspenseInfiniteQuery](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/useSuspenseInfiniteQuery.md)
 - [useSuspenseQueries](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/useSuspenseQueries.md)
-- Additionally, you can use the `useQuery().promise` and `React.use()` (Experimental)
 
 When using suspense mode, `status` states and `error` objects are not needed and are then replaced by usage of the `React.Suspense` component (including the use of the `fallback` prop and React error boundaries for catching errors). Please read the [Resetting Error Boundaries](https://github.com/TanStack/query/blob/main/docs/framework/react/guides/suspense.md#resetting-error-boundaries) and look at the [Suspense Example](https://github.com/TanStack/query/blob/main/docs/framework/react/examples/suspense) for more information on how to set up suspense mode.
 
@@ -7552,59 +7551,6 @@ export function Providers(props: { children: React.ReactNode }) {
 ```
 
 For more information, check out the [NextJs Suspense Streaming Example](https://github.com/TanStack/query/blob/main/docs/framework/react/examples/nextjs-suspense-streaming) and the [Advanced Rendering & Hydration](https://github.com/TanStack/query/blob/main/docs/framework/react/guides/advanced-ssr.md) guide.
-
-## Using `useQuery().promise` and `React.use()` (Experimental)
-
-> To enable this feature, you need to set the `experimental_prefetchInRender` option to `true` when creating your `QueryClient`
-
-**Example code:**
-
-```tsx
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      experimental_prefetchInRender: true,
-    },
-  },
-})
-```
-
-**Usage:**
-
-```tsx
-import React from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { fetchTodos, type Todo } from './api'
-
-function TodoList({ query }: { query: UseQueryResult<Todo[]> }) {
-  const data = React.use(query.promise)
-
-  return (
-    <ul>
-      {data.map((todo) => (
-        <li key={todo.id}>{todo.title}</li>
-      ))}
-    </ul>
-  )
-}
-
-export function App() {
-  const query = useQuery({ queryKey: ['todos'], queryFn: fetchTodos })
-
-  return (
-    <>
-      <h1>Todos</h1>
-      <React.Suspense fallback={<div>Loading...</div>}>
-        <TodoList query={query} />
-      </React.Suspense>
-    </>
-  )
-}
-```
-
-For a more complete example, see [suspense example on GitHub](https://github.com/TanStack/query/tree/main/examples/react/suspense).
-
-For a Next.js streaming example, see [nextjs-suspense-streaming example on GitHub](https://github.com/TanStack/query/tree/main/examples/react/nextjs-suspense-streaming).
 
 ### docs/framework/react/guides/testing.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/testing.md
@@ -8252,6 +8198,26 @@ interface BroadcastQueryClientOptions {
   broadcastChannel?: string
   /** Options for the BroadcastChannel API */
   options?: BroadcastChannelOptions
+  /**
+   * Called when a query event fails to broadcast to other tabs — most
+   * commonly because the query's data, error, or key contains a value the
+   * structured-clone algorithm cannot serialize (e.g. `ReadableStream`,
+   * `File`, functions, Vue `reactive` proxies).
+   *
+   * If omitted, a `console.warn` is emitted in development so failures
+   * are never entirely silent. May return a `Promise`; any rejection is
+   * caught internally.
+   */
+  onBroadcastError?: (
+    error: unknown,
+    event: BroadcastErrorEvent,
+  ) => void | Promise<void>
+}
+
+interface BroadcastErrorEvent {
+  type: 'updated' | 'removed' | 'added'
+  queryHash: string
+  queryKey: QueryKey
 }
 ```
 
@@ -8261,6 +8227,28 @@ The default options are:
 {
   broadcastChannel = 'tanstack-query',
 }
+```
+
+## Handling broadcast errors
+
+If your cache can hold values that are not structured-cloneable — such as `ReadableStream` (from `Response.body`, streaming APIs, or AI SDKs), `File`, functions, or framework proxies like Vue `reactive` — the underlying `BroadcastChannel.postMessage` call will reject for that query. Cross-tab sync is skipped for that query; the rest of the cache continues to broadcast normally.
+
+By default, a `console.warn` is emitted in development so failures are never silent. Provide `onBroadcastError` to route failures to your own error tracker:
+
+```tsx
+import * as Sentry from '@sentry/browser'
+import { broadcastQueryClient } from '@tanstack/query-broadcast-client-experimental'
+
+broadcastQueryClient({
+  queryClient,
+  broadcastChannel: 'my-app',
+  onBroadcastError: (error, event) => {
+    Sentry.captureException(error, {
+      tags: { broadcastEvent: event.type },
+      extra: { queryHash: event.queryHash, queryKey: event.queryKey },
+    })
+  },
+})
 ```
 
 ### docs/framework/react/plugins/createAsyncStoragePersister.md
@@ -9575,12 +9563,6 @@ You can generally pass everything to `queryOptions` that you can also pass to [`
 - `queryKey: QueryKey`
   - **Required**
   - The query key to generate options for.
-- `experimental_prefetchInRender?: boolean`
-  - Optional
-  - Defaults to `false`
-  - When set to `true`, queries will be prefetched during render, which can be useful for certain optimization scenarios
-  - Needs to be turned on for the experimental `useQuery().promise` functionality
-
 [//]: https://github.com/TanStack/query/blob/main/docs/framework/react/reference/queryOptions.md# 'Materials'
 
 ## Further reading
@@ -9606,7 +9588,6 @@ const {
   hasPreviousPage,
   isFetchingNextPage,
   isFetchingPreviousPage,
-  promise,
   ...result
 } = useInfiniteQuery({
   queryKey,
@@ -9681,13 +9662,6 @@ The returned properties for `useInfiniteQuery` are identical to the [`useQuery` 
   - Is the same as `isFetching && !isPending && !isFetchingNextPage && !isFetchingPreviousPage`
 - `isRefetchError: boolean`
   - Will be `true` if the query failed while refetching a page.
-- `promise: Promise<TData>`
-  - A stable promise that resolves to the query result.
-  [//]: https://github.com/TanStack/query/blob/main/docs/framework/react/reference/useInfiniteQuery.md# 'ReactUse'
-  - This can be used with `React.use()` to fetch data
-  [//]: https://github.com/TanStack/query/blob/main/docs/framework/react/reference/useInfiniteQuery.md# 'ReactUse'
-  - Requires the `experimental_prefetchInRender` feature flag to be enabled on the `QueryClient`.
-
 Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default refetch behaviour, resulting in outdated data. Make sure to call these functions only in response to user actions, or add conditions like `hasNextPage && !isFetching`.
 
 ### docs/framework/react/reference/useIsFetching.md
@@ -10017,7 +9991,7 @@ usePrefetchInfiniteQuery(options)
 
 **Options**
 
-You can pass everything to `usePrefetchInfiniteQuery` that you can pass to [`queryClient.prefetchInfiniteQuery`](https://github.com/TanStack/query/blob/main/docs/reference/QueryClient.md#queryclientprefetchinfinitequery). Remember that some of them are required as below:
+You can pass everything to `usePrefetchInfiniteQuery` that you can pass to [`queryClient.infiniteQuery`](https://github.com/TanStack/query/blob/main/docs/reference/QueryClient.md#queryclient-infinitequery). Remember that some of them are required as below:
 
 - `queryKey: QueryKey`
   - **Required**
@@ -10055,13 +10029,13 @@ usePrefetchQuery(options)
 
 **Options**
 
-You can pass everything to `usePrefetchQuery` that you can pass to [`queryClient.prefetchQuery`](https://github.com/TanStack/query/blob/main/docs/reference/QueryClient.md#queryclientprefetchquery). Remember that some of them are required as below:
+You can pass everything to `usePrefetchQuery` that you can pass to [`queryClient.query`](https://github.com/TanStack/query/blob/main/docs/reference/QueryClient.md#queryclient-query). Remember that some of them are required as below:
 
 - `queryKey: QueryKey`
   - **Required**
   - The query key to prefetch during render
 
-- `queryFn: (context: QueryFunctionContext) => Promise<TData>`
+- `queryFn: (context: QueryFunctionContext<TQueryKey>) => TQueryFnData | Promise<TQueryFnData>`
   - **Required, but only if no default query function has been defined** See [Default Query Function](https://github.com/TanStack/query/blob/main/docs/framework/react/guides/default-query-function.md) for more information.
 
 **Returns**
@@ -10252,7 +10226,6 @@ const {
   isStale,
   isSuccess,
   isEnabled,
-  promise,
   refetch,
   status,
 } = useQuery(
@@ -10481,9 +10454,6 @@ const {
     - Defaults to `true`
       - Per default, a currently running request will be cancelled before a new request is made
     - When set to `false`, no refetch will be made if there is already a request running.
-- `promise: Promise<TData>`
-  - A stable promise that will be resolved with the data of the query.
-  - Requires the `experimental_prefetchInRender` feature flag to be enabled on the `QueryClient`.
 
 ### docs/framework/react/reference/useQueryClient.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/reference/useQueryClient.md
