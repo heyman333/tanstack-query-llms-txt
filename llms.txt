@@ -8232,6 +8232,12 @@ focusManager.setFocused(undefined)
 
 [//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/window-focus-refetching.md# 'Example4'
 
+## Troubleshooting
+
+If stale queries do not refetch when you return to a tab, check whether **Emulate a focused page** is enabled in Chrome DevTools. This setting keeps `document.visibilityState` set to `visible` and prevents `visibilitychange` events, which TanStack Query uses for its default focus handling.
+
+Disable **Emulate a focused page** in the DevTools **Rendering** panel, then switch to another tab and return to test window focus refetching. See the [Chrome DevTools documentation](https://developer.chrome.com/docs/devtools/rendering/apply-effects#emulate_a_focused_page) for more details.
+
 ### docs/framework/react/installation.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/installation.md
 RAW_URL: https://raw.githubusercontent.com/TanStack/query/main/docs/framework/react/installation.md
@@ -8656,9 +8662,9 @@ interface CreateAsyncStoragePersisterOptions {
    * pass a time in ms to throttle saving the cache to disk */
   throttleTime?: number
   /** How to serialize the data to storage */
-  serialize?: (client: PersistedClient) => string
+  serialize?: (client: PersistedClient) => MaybePromise<string>
   /** How to deserialize the data from storage */
-  deserialize?: (cachedString: string) => PersistedClient
+  deserialize?: (cachedString: string) => MaybePromise<PersistedClient>
   /** How to retry persistence on error **/
   retry?: AsyncPersistRetryer
 }
@@ -8670,6 +8676,8 @@ interface AsyncStorage<TStorageValue = string> {
   entries?: () => MaybePromise<Array<[key: string, value: TStorageValue]>>
 }
 ```
+
+The `serialize` and `deserialize` callbacks can return their results synchronously or asynchronously as promises.
 
 The default options are:
 
