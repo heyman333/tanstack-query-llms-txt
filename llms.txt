@@ -6633,7 +6633,7 @@ export const useTodoCount = () => {
 
 A component using the `useTodoCount` custom hook will only re-render if the length of the todos changes. It will **not** re-render if e.g. the name of a todo changed.
 
-> Note: `select` operates on successfully cached data and is not the appropriate place to throw errors. The source of truth for errors is the `queryFn`, and a `select` function that returns an error results in `data` being `undefined` and `isSuccess` being `true`. We recommend handling errors in the `queryFn` if you wish to have a query fail on incorrect data, or outside of the query hook if you have a error case not related to caching.
+> Note: `select` operates on successfully cached data and is not the appropriate place to throw errors. The source of truth for errors is the `queryFn`, and a `select` function that returns an error results in `data` being `undefined` and `isSuccess` being `true`. We recommend handling errors in the `queryFn` if you wish to have a query fail on incorrect data, or outside of the query hook if you have an error case not related to caching.
 
 ### memoization
 
@@ -7115,7 +7115,7 @@ With a client rendered application, these are the minimum 3 server roundtrips yo
 
 As soon as **1.** is complete, the user can see the content and when **2.** finishes, the page is interactive and clickable. Because the markup also contains the initial data we need, step **3.** does not need to run on the client at all, at least until you want to revalidate the data for some reason.
 
-This is all from the clients perspective. On the server, we need to **prefetch** that data before we generate/render the markup, we need to **dehydrate** that data into a serializable format we can embed in the markup, and on the client we need to **hydrate** that data into a React Query cache so we can avoid doing a new fetch on the client.
+This is all from the client's perspective. On the server, we need to **prefetch** that data before we generate/render the markup, we need to **dehydrate** that data into a serializable format we can embed in the markup, and on the client we need to **hydrate** that data into a React Query cache so we can avoid doing a new fetch on the client.
 
 Read on to learn how to implement these three steps with React Query.
 
@@ -7127,7 +7127,7 @@ If you do forget to prefetch a query when you are using `useSuspenseQuery`, the 
 
 ## Initial setup
 
-The first steps of using React Query is always to create a `queryClient` and wrap the application in a `<QueryClientProvider>`. When doing server rendering, it's important to create the `queryClient` instance **inside of your app**, in React state (an instance ref works fine too). **This ensures that data is not shared between different users and requests**, while still only creating the `queryClient` once per component lifecycle.
+The first steps of using React Query are always to create a `queryClient` and wrap the application in a `<QueryClientProvider>`. When doing server rendering, it's important to create the `queryClient` instance **inside of your app**, in React state (an instance ref works fine too). **This ensures that data is not shared between different users and requests**, while still only creating the `queryClient` once per component lifecycle.
 
 Next.js pages router:
 
@@ -7253,7 +7253,7 @@ With just a little more setup, you can use a `queryClient` to prefetch queries d
 - In the framework loader function, create a `const queryClient = new QueryClient(options)`
 - In the loader function, do `await queryClient.query(...)` for each query you want to prefetch
   - You want to use `await Promise.all(...)` to fetch the queries in parallel when possible
-  - It's fine to have queries that aren't prefetched. These wont be server rendered, instead they will be fetched on the client after the application is interactive. This can be great for content that are shown only after user interaction, or is far down on the page to avoid blocking more critical content.
+  - It's fine to have queries that aren't prefetched. These won't be server rendered, instead they will be fetched on the client after the application is interactive. This can be great for content that is shown only after user interaction, or is far down on the page to avoid blocking more critical content.
 - From the loader, return `dehydrate(queryClient)`, note that the exact syntax to return this differs between frameworks
 - Wrap your tree with `<HydrationBoundary state={dehydratedState}>` where `dehydratedState` comes from the framework loader. How you get `dehydratedState` also differs between frameworks.
   - This can be done for each route, or at the top of the application to avoid boilerplate, see examples
@@ -7301,6 +7301,7 @@ In each route:
 import {
   dehydrate,
   HydrationBoundary,
+  noop,
   QueryClient,
   useQuery,
 } from '@tanstack/react-query'
@@ -7386,6 +7387,7 @@ import { json } from '@remix-run/node'
 import {
   dehydrate,
   HydrationBoundary,
+  noop,
   QueryClient,
   useQuery,
 } from '@tanstack/react-query'
@@ -7509,9 +7511,9 @@ export async function getServerSideProps() {
     queryFn: getUserByEmail,
   })
 
-  if (user?.userId) {
+  if (user?.id) {
     await queryClient.query({
-      queryKey: ['projects', userId],
+      queryKey: ['projects', user.id],
       queryFn: getProjectsByUser,
     })
   }
@@ -7569,7 +7571,7 @@ If you are using a custom SSR setup, you need to take care of this step yourself
 
 ## A note about request waterfalls
 
-In the [Performance & Request Waterfalls guide](https://github.com/TanStack/query/blob/main/docs/framework/react/guides/request-waterfalls.md) we mentioned we would revisit how server rendering changes one of the more complex nested waterfalls. Check back for the [specific code example](https://github.com/TanStack/query/blob/main/docs/framework/react/guides/request-waterfalls#code-splitting), but as a refresher, we have a code split `<GraphFeedItem>` component inside a `<Feed>` component. This only renders if the feed contains a graph item and both of these components fetches their own data. With client rendering, this leads to the following request waterfall:
+In the [Performance & Request Waterfalls guide](https://github.com/TanStack/query/blob/main/docs/framework/react/guides/request-waterfalls.md) we mentioned we would revisit how server rendering changes one of the more complex nested waterfalls. Check back for the [specific code example](https://github.com/TanStack/query/blob/main/docs/framework/react/guides/request-waterfalls.md#code-splitting), but as a refresher, we have a code split `<GraphFeedItem>` component inside a `<Feed>` component. This only renders if the feed contains a graph item and both of these components fetch their own data. With client rendering, this leads to the following request waterfall:
 
 ```
 1. |> Markup (without content)
@@ -9982,22 +9984,6 @@ Defined in: [packages/query-core/src/infiniteQueryObserver.ts:83](https://github
 
 ## Properties
 
-### fetch
-
-```ts
-protected fetch: ReplaceReturnType<(fetchOptions: ObserverFetchOptions) => Promise<QueryObserverResult<TData, TError>>, Promise<InfiniteQueryObserverResult<TData, TError>>>;
-```
-
-Defined in: [packages/query-core/src/infiniteQueryObserver.ts:72](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L72)
-
-#### Overrides
-
-```ts
-QueryObserver.fetch
-```
-
-***
-
 ### getCurrentResult
 
 ```ts
@@ -10023,20 +10009,6 @@ console.log(result.status, result.data)
 ```ts
 QueryObserver.getCurrentResult
 ```
-
-***
-
-### listeners
-
-```ts
-protected listeners: Set<QueryObserverListener<TData, TError>>;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:7](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L7)
-
-#### Inherited from
-
-[`QueryObserver`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryObserver.md).[`listeners`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryObserver.md#listeners)
 
 ***
 
@@ -10101,52 +10073,6 @@ QueryObserver.subscribe
 ```
 
 ## Methods
-
-### bindMethods()
-
-```ts
-protected bindMethods(): void;
-```
-
-Defined in: [packages/query-core/src/infiniteQueryObserver.ts:96](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L96)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-[`QueryObserver`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryObserver.md).[`bindMethods`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryObserver.md#bindmethods)
-
-***
-
-### createResult()
-
-```ts
-protected createResult(query: Query<TQueryFnData, TError, InfiniteData<TQueryFnData, TPageParam>, TQueryKey>, options: InfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): InfiniteQueryObserverResult<TData, TError>;
-```
-
-Defined in: [packages/query-core/src/infiniteQueryObserver.ts:201](https://github.com/TanStack/query/blob/main/packages/query-core/src/infiniteQueryObserver.ts#L201)
-
-#### Parameters
-
-##### query
-
-[`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\>, `TQueryKey`\>
-
-##### options
-
-[`InfiniteQueryObserverOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteQueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
-
-#### Returns
-
-[`InfiniteQueryObserverResult`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/InfiniteQueryObserverResult.md)\<`TData`, `TError`\>
-
-#### Overrides
-
-[`QueryObserver`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryObserver.md).[`createResult`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryObserver.md#createresult)
-
-***
 
 ### destroy()
 
@@ -10356,42 +10282,6 @@ Returns `true` while at least one listener is registered, `false` once they have
 #### Inherited from
 
 [`QueryObserver`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryObserver.md).[`hasListeners`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryObserver.md#haslisteners)
-
-***
-
-### onSubscribe()
-
-```ts
-protected onSubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/queryObserver.ts:110](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L110)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-[`QueryObserver`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryObserver.md).[`onSubscribe`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryObserver.md#onsubscribe)
-
-***
-
-### onUnsubscribe()
-
-```ts
-protected onUnsubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/queryObserver.ts:124](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L124)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-[`QueryObserver`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryObserver.md).[`onUnsubscribe`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryObserver.md#onunsubscribe)
 
 ***
 
@@ -10801,26 +10691,6 @@ The `meta` object passed in the mutation's options, if any.
 
 ## Methods
 
-### clearGcTimeout()
-
-```ts
-protected clearGcTimeout(): void;
-```
-
-Defined in: [packages/query-core/src/removable.ts:41](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L41)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-Removable.clearGcTimeout
-```
-
-***
-
 ### continue()
 
 ```ts
@@ -10932,72 +10802,6 @@ const data = await mutation.execute(variables)
 
 [Mutation#continue](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Mutation.md#continue)
 
-***
-
-### optionalRemove()
-
-```ts
-protected optionalRemove(): void;
-```
-
-Defined in: [packages/query-core/src/mutation.ts:212](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L212)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Removable.optionalRemove
-```
-
-***
-
-### scheduleGc()
-
-```ts
-protected scheduleGc(): void;
-```
-
-Defined in: [packages/query-core/src/removable.ts:23](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L23)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-Removable.scheduleGc
-```
-
-***
-
-### updateGcTime()
-
-```ts
-protected updateGcTime(newGcTime: number | undefined): void;
-```
-
-Defined in: [packages/query-core/src/removable.ts:33](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L33)
-
-#### Parameters
-
-##### newGcTime
-
-`number` | `undefined`
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-Removable.updateGcTime
-```
-
 ### docs/framework/react/reference/classes/MutationCache.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/MutationCache.md
 RAW_URL: https://raw.githubusercontent.com/TanStack/query/main/docs/framework/react/reference/classes/MutationCache.md
@@ -11065,22 +10869,6 @@ config: MutationCacheConfig = {};
 ```
 
 Defined in: [packages/query-core/src/mutationCache.ts:129](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L129)
-
-***
-
-### listeners
-
-```ts
-protected listeners: Set<MutationCacheListener>;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:7](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L7)
-
-#### Inherited from
-
-```ts
-Subscribable.listeners
-```
 
 ## Methods
 
@@ -11254,46 +11042,6 @@ Subscribable.hasListeners
 
 ***
 
-### onSubscribe()
-
-```ts
-protected onSubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:45](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L45)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-Subscribable.onSubscribe
-```
-
-***
-
-### onUnsubscribe()
-
-```ts
-protected onUnsubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:49](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L49)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-Subscribable.onUnsubscribe
-```
-
-***
-
 ### subscribe()
 
 ```ts
@@ -11422,22 +11170,6 @@ Subscribable<
 
 ## Properties
 
-### listeners
-
-```ts
-protected listeners: Set<MutationObserverListener<TData, TError, TVariables, TOnMutateResult>>;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:7](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L7)
-
-#### Inherited from
-
-```ts
-Subscribable.listeners
-```
-
-***
-
 ### options
 
 ```ts
@@ -11447,20 +11179,6 @@ options: MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>;
 Defined in: [packages/query-core/src/mutationObserver.ts:46](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L46)
 
 ## Methods
-
-### bindMethods()
-
-```ts
-protected bindMethods(): void;
-```
-
-Defined in: [packages/query-core/src/mutationObserver.ts:75](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L75)
-
-#### Returns
-
-`void`
-
-***
 
 ### getCurrentResult()
 
@@ -11540,46 +11258,6 @@ await observer.mutate(
   { title: 'New post' },
   { onSuccess: (data) => console.log(data) },
 )
-```
-
-***
-
-### onSubscribe()
-
-```ts
-protected onSubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/mutationObserver.ts:127](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L127)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onSubscribe
-```
-
-***
-
-### onUnsubscribe()
-
-```ts
-protected onUnsubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/mutationObserver.ts:135](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationObserver.ts#L135)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onUnsubscribe
 ```
 
 ***
@@ -11778,22 +11456,6 @@ Defined in: [packages/query-core/src/queriesObserver.ts:70](https://github.com/T
 Subscribable<QueriesObserverListener>.constructor
 ```
 
-## Properties
-
-### listeners
-
-```ts
-protected listeners: Set<QueriesObserverListener>;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:7](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L7)
-
-#### Inherited from
-
-```ts
-Subscribable.listeners
-```
-
 ## Methods
 
 ### destroy()
@@ -11921,46 +11583,6 @@ Returns `true` while at least one listener is registered, `false` once they have
 
 ```ts
 Subscribable.hasListeners
-```
-
-***
-
-### onSubscribe()
-
-```ts
-protected onSubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/queriesObserver.ts:86](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L86)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onSubscribe
-```
-
-***
-
-### onUnsubscribe()
-
-```ts
-protected onUnsubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/queriesObserver.ts:96](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L96)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onUnsubscribe
 ```
 
 ***
@@ -12262,26 +11884,6 @@ await query.cancel()
 
 ***
 
-### clearGcTimeout()
-
-```ts
-protected clearGcTimeout(): void;
-```
-
-Defined in: [packages/query-core/src/removable.ts:41](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L41)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-Removable.clearGcTimeout
-```
-
-***
-
 ### destroy()
 
 ```ts
@@ -12533,26 +12135,6 @@ Returns `true` if the query has at least one observer configured with
 
 ***
 
-### optionalRemove()
-
-```ts
-protected optionalRemove(): void;
-```
-
-Defined in: [packages/query-core/src/query.ts:305](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L305)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Removable.optionalRemove
-```
-
-***
-
 ### reset()
 
 ```ts
@@ -12568,26 +12150,6 @@ in-flight fetch.
 #### Returns
 
 `void`
-
-***
-
-### scheduleGc()
-
-```ts
-protected scheduleGc(): void;
-```
-
-Defined in: [packages/query-core/src/removable.ts:23](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L23)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-Removable.scheduleGc
-```
 
 ***
 
@@ -12612,32 +12174,6 @@ user manually trigger a loading/error state or edit the cached data.
 #### Returns
 
 `void`
-
-***
-
-### updateGcTime()
-
-```ts
-protected updateGcTime(newGcTime: number | undefined): void;
-```
-
-Defined in: [packages/query-core/src/removable.ts:33](https://github.com/TanStack/query/blob/main/packages/query-core/src/removable.ts#L33)
-
-#### Parameters
-
-##### newGcTime
-
-`number` | `undefined`
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-Removable.updateGcTime
-```
 
 ### docs/framework/react/reference/classes/QueryCache.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryCache.md
@@ -12709,22 +12245,6 @@ config: QueryCacheConfig = {};
 ```
 
 Defined in: [packages/query-core/src/queryCache.ts:126](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L126)
-
-***
-
-### listeners
-
-```ts
-protected listeners: Set<QueryCacheListener>;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:7](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L7)
-
-#### Inherited from
-
-```ts
-Subscribable.listeners
-```
 
 ## Methods
 
@@ -13010,46 +12530,6 @@ Returns `true` while at least one listener is registered, `false` once they have
 
 ```ts
 Subscribable.hasListeners
-```
-
-***
-
-### onSubscribe()
-
-```ts
-protected onSubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:45](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L45)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-Subscribable.onSubscribe
-```
-
-***
-
-### onUnsubscribe()
-
-```ts
-protected onUnsubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:49](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L49)
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-```ts
-Subscribable.onUnsubscribe
 ```
 
 ***
@@ -14720,22 +14200,6 @@ Subscribable<QueryObserverListener<TData, TError>>.constructor
 
 ## Properties
 
-### listeners
-
-```ts
-protected listeners: Set<QueryObserverListener<TData, TError>>;
-```
-
-Defined in: [packages/query-core/src/subscribable.ts:7](https://github.com/TanStack/query/blob/main/packages/query-core/src/subscribable.ts#L7)
-
-#### Inherited from
-
-```ts
-Subscribable.listeners
-```
-
-***
-
 ### options
 
 ```ts
@@ -14745,44 +14209,6 @@ options: QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey
 Defined in: [packages/query-core/src/queryObserver.ts:89](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L89)
 
 ## Methods
-
-### bindMethods()
-
-```ts
-protected bindMethods(): void;
-```
-
-Defined in: [packages/query-core/src/queryObserver.ts:106](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L106)
-
-#### Returns
-
-`void`
-
-***
-
-### createResult()
-
-```ts
-protected createResult(query: Query<TQueryFnData, TError, TQueryData, TQueryKey>, options: QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>): QueryObserverResult<TData, TError>;
-```
-
-Defined in: [packages/query-core/src/queryObserver.ts:559](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L559)
-
-#### Parameters
-
-##### query
-
-[`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, `TQueryData`, `TQueryKey`\>
-
-##### options
-
-[`QueryObserverOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/QueryObserverOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryData`, `TQueryKey`\>
-
-#### Returns
-
-[`QueryObserverResult`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/QueryObserverResult.md)\<`TData`, `TError`\>
-
-***
 
 ### destroy()
 
@@ -14799,26 +14225,6 @@ query it was observing.
 #### Returns
 
 `void`
-
-***
-
-### fetch()
-
-```ts
-protected fetch(fetchOptions: ObserverFetchOptions): Promise<QueryObserverResult<TData, TError>>;
-```
-
-Defined in: [packages/query-core/src/queryObserver.ts:448](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L448)
-
-#### Parameters
-
-##### fetchOptions
-
-`ObserverFetchOptions`
-
-#### Returns
-
-`Promise`\<[`QueryObserverResult`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/QueryObserverResult.md)\<`TData`, `TError`\>\>
 
 ***
 
@@ -14943,46 +14349,6 @@ Returns `true` while at least one listener is registered, `false` once they have
 
 ```ts
 Subscribable.hasListeners
-```
-
-***
-
-### onSubscribe()
-
-```ts
-protected onSubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/queryObserver.ts:110](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L110)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onSubscribe
-```
-
-***
-
-### onUnsubscribe()
-
-```ts
-protected onUnsubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/queryObserver.ts:124](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L124)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onUnsubscribe
 ```
 
 ***
@@ -16448,13 +15814,14 @@ redirect_from:
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/react-query/src/queryOptions.ts:142](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L142)
+Defined in: [packages/react-query/src/queryOptions.ts:143](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L143)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
 is the query key to generate options for.
 
-This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
+a `select` changes `TData` to include `undefined`).
 
 ### Type Parameters
 
@@ -16524,7 +15891,7 @@ function Posts() {
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>): OmitKeyof<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/react-query/src/queryOptions.ts:183](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L183)
+Defined in: [packages/react-query/src/queryOptions.ts:184](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L184)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -16593,7 +15960,7 @@ function Post({ id }: { id: string }) {
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/react-query/src/queryOptions.ts:247](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L247)
+Defined in: [packages/react-query/src/queryOptions.ts:248](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L248)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -17920,7 +17287,7 @@ redirect_from:
 function useQueries<T, TCombinedResult>(__namedParameters: object, queryClient?: QueryClient): TCombinedResult;
 ```
 
-Defined in: [packages/react-query/src/useQueries.ts:355](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQueries.ts#L355)
+Defined in: [packages/react-query/src/useQueries.ts:359](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQueries.ts#L359)
 
 The `useQueries` hook can be used to fetch a variable number of queries.
 
@@ -18122,9 +17489,10 @@ redirect_from:
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): DefinedUseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/react-query/src/useQuery.ts:50](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQuery.ts#L50)
+Defined in: [packages/react-query/src/useQuery.ts:51](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQuery.ts#L51)
 
-This overload is selected when `initialData` is set, so the resulting `data` is never `undefined`.
+This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless
+a `select` changes `TData` to include `undefined`).
 
 ### Type Parameters
 
@@ -18202,7 +17570,7 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/react-query/src/useQuery.ts:117](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQuery.ts#L117)
+Defined in: [packages/react-query/src/useQuery.ts:118](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQuery.ts#L118)
 
 ### Type Parameters
 
@@ -18303,7 +17671,7 @@ function Posts() {
 function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryResult<TData, TError>;
 ```
 
-Defined in: [packages/react-query/src/useQuery.ts:281](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQuery.ts#L281)
+Defined in: [packages/react-query/src/useQuery.ts:286](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQuery.ts#L286)
 
 ### Type Parameters
 
@@ -18437,7 +17805,9 @@ function Post({ postId }: { postId: number | undefined }) {
 }
 ```
 
-Seeding a detail query from an already-cached list, to skip the loading state:
+Seeding a detail query from an already-cached list, to skip the loading state. `initialDataUpdatedAt` carries
+over the list's own fetch time, so that if you set a `staleTime`, it's measured from when the list was
+fetched rather than from now:
 ```tsx
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
@@ -18451,6 +17821,8 @@ function Post({ postId }: { postId: number }) {
       queryClient
         .getQueryData<Array<Post>>(['posts'])
         ?.find((post) => post.id === postId),
+    initialDataUpdatedAt: () =>
+      queryClient.getQueryState(['posts'])?.dataUpdatedAt,
   })
 
   if (isError) return <span>Error: {error.message}</span>
@@ -18744,7 +18116,7 @@ redirect_from:
 function useSuspenseQueries<T, TCombinedResult>(options: object, queryClient?: QueryClient): TCombinedResult;
 ```
 
-Defined in: [packages/react-query/src/useSuspenseQueries.ts:349](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQueries.ts#L349)
+Defined in: [packages/react-query/src/useSuspenseQueries.ts:353](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQueries.ts#L353)
 
 The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed`
 option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
@@ -18954,7 +18326,7 @@ function App() {
 function useSuspenseQueries<T, TCombinedResult>(options: object, queryClient?: QueryClient): TCombinedResult;
 ```
 
-Defined in: [packages/react-query/src/useSuspenseQueries.ts:489](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQueries.ts#L489)
+Defined in: [packages/react-query/src/useSuspenseQueries.ts:493](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQueries.ts#L493)
 
 The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed`
 option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
@@ -19761,12 +19133,6 @@ It can be used to change the default event listeners or to manually change the f
 
 - `Subscribable`\<`Listener`\>
 
-## Properties
-
-| Property | Modifier | Type |
-| ------ | ------ | ------ |
-| <a id="listeners"></a> `listeners` | `protected` | `Set`\<`Listener`\> |
-
 ## Methods
 
 ### hasListeners()
@@ -19820,46 +19186,6 @@ Defined in: [packages/query-core/src/focusManager.ts:118](https://github.com/Tan
 #### Returns
 
 `void`
-
-***
-
-### onSubscribe()
-
-```ts
-protected onSubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/focusManager.ts:39](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L39)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onSubscribe
-```
-
-***
-
-### onUnsubscribe()
-
-```ts
-protected onUnsubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/focusManager.ts:45](https://github.com/TanStack/query/blob/main/packages/query-core/src/focusManager.ts#L45)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onUnsubscribe
-```
 
 ***
 
@@ -21298,12 +20624,6 @@ detect changes.
 
 - `Subscribable`\<`Listener`\>
 
-## Properties
-
-| Property | Modifier | Type |
-| ------ | ------ | ------ |
-| <a id="listeners"></a> `listeners` | `protected` | `Set`\<`Listener`\> |
-
 ## Methods
 
 ### hasListeners()
@@ -21341,46 +20661,6 @@ Defined in: [packages/query-core/src/onlineManager.ts:109](https://github.com/Ta
 #### Returns
 
 `boolean`
-
-***
-
-### onSubscribe()
-
-```ts
-protected onSubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/onlineManager.ts:44](https://github.com/TanStack/query/blob/main/packages/query-core/src/onlineManager.ts#L44)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onSubscribe
-```
-
-***
-
-### onUnsubscribe()
-
-```ts
-protected onUnsubscribe(): void;
-```
-
-Defined in: [packages/query-core/src/onlineManager.ts:50](https://github.com/TanStack/query/blob/main/packages/query-core/src/onlineManager.ts#L50)
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-```ts
-Subscribable.onUnsubscribe
-```
 
 ***
 
@@ -22841,7 +22121,7 @@ id: UseMutationOptions
 title: UseMutationOptions
 ---
 
-Defined in: [packages/react-query/src/types.ts:412](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L412)
+Defined in: [packages/react-query/src/types.ts:413](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L413)
 
 The options accepted by `useMutation`. Same as [MutationObserverOptions](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/MutationObserverOptions.md) from `@tanstack/query-core`,
 minus the internal `_defaulted` flag.
@@ -23202,7 +22482,7 @@ title: AnyUseMutationOptions
 type AnyUseMutationOptions = UseMutationOptions<any, any, any, any>;
 ```
 
-Defined in: [packages/react-query/src/types.ts:401](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L401)
+Defined in: [packages/react-query/src/types.ts:402](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L402)
 
 [UseMutationOptions](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/UseMutationOptions.md) with all type parameters set to `any`, useful when the specific types aren't
 relevant, e.g. when accepting options for any mutation in a helper function.
@@ -23455,7 +22735,7 @@ type DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, T
 Defined in: [packages/react-query/src/infiniteQueryOptions.ts:103](https://github.com/TanStack/query/blob/main/packages/react-query/src/infiniteQueryOptions.ts#L103)
 
 The options accepted by the `infiniteQueryOptions` overload selected when `initialData` is set — `data` is
-never `undefined`.
+never `undefined` (unless a `select` changes `TData` to include `undefined`).
 
 ## Type Declaration
 
@@ -23523,7 +22803,7 @@ type DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> = Omit<Us
 Defined in: [packages/react-query/src/queryOptions.ts:80](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L80)
 
 The options accepted by the `queryOptions` overload selected when `initialData` is set — `data` is never
-`undefined`.
+`undefined` (unless a `select` changes `TData` to include `undefined`).
 
 ## Type Declaration
 
@@ -23617,10 +22897,11 @@ title: DefinedUseInfiniteQueryResult
 type DefinedUseInfiniteQueryResult<TData, TError> = DefinedInfiniteQueryObserverResult<TData, TError>;
 ```
 
-Defined in: [packages/react-query/src/types.ts:377](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L377)
+Defined in: [packages/react-query/src/types.ts:378](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L378)
 
-The result of `useInfiniteQuery` when `initialData` is set — `data` is never `undefined`. Re-exports
-[DefinedInfiniteQueryObserverResult](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/DefinedInfiniteQueryObserverResult.md) from `@tanstack/query-core`.
+The result of `useInfiniteQuery` when `initialData` is set — `data` is never `undefined` (unless a
+`select` changes `TData` to include `undefined`). Re-exports [DefinedInfiniteQueryObserverResult](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/DefinedInfiniteQueryObserverResult.md)
+from `@tanstack/query-core`.
 
 ## Type Parameters
 
@@ -23652,8 +22933,8 @@ type DefinedUseQueryResult<TData, TError> = DefinedQueryObserverResult<TData, TE
 Defined in: [packages/react-query/src/types.ts:353](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L353)
 
 The result of `useQuery` when `initialData` is set, or of `useSuspenseQuery` before the `isPlaceholderData`
-omission — `data` is never `undefined`. Re-exports [DefinedQueryObserverResult](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/DefinedQueryObserverResult.md) from
-`@tanstack/query-core`.
+omission — `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
+Re-exports [DefinedQueryObserverResult](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/DefinedQueryObserverResult.md) from `@tanstack/query-core`.
 
 ## Type Parameters
 
@@ -24531,12 +23812,16 @@ title: QueriesOptions
 type QueriesOptions<T, TResults, TDepth> = TDepth["length"] extends MAXIMUM_DEPTH ? UseQueryOptionsForUseQueries[] : T extends [] ? [] : T extends [infer Head] ? [...TResults, GetUseQueryOptionsForUseQueries<Head>] : T extends [infer Head, ...(infer Tails)] ? QueriesOptions<[...Tails], [...TResults, GetUseQueryOptionsForUseQueries<Head>], [...TDepth, 1]> : ReadonlyArray<unknown> extends T ? T : T extends UseQueryOptionsForUseQueries<infer TQueryFnData, infer TError, infer TData, infer TQueryKey>[] ? UseQueryOptionsForUseQueries<TQueryFnData, TError, TData, TQueryKey>[] : UseQueryOptionsForUseQueries[];
 ```
 
-Defined in: [packages/react-query/src/useQueries.ts:156](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQueries.ts#L156)
+Defined in: [packages/react-query/src/useQueries.ts:160](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQueries.ts#L160)
 
 The `queries` array accepted by `useQueries`. Recursively unwraps each tuple element so every entry's
-`queryFn`/`select`/`throwOnError` are inferred individually, up to 20 elements. An opaque array (e.g.
-`unknown[]`) is returned as-is; a non-tuple array of a known element type, or a tuple past 20 elements, falls
+`queryFn`/`select`/`throwOnError` are inferred individually, up to 20 elements — past that, a tuple falls
 back to a single homogeneous options type.
+
+An opaque array (e.g. `unknown[]`) is returned as-is; a non-tuple array whose element type structurally
+matches a query options object is mapped per-element instead, still inferring each entry individually; any
+other non-tuple array — one whose element type doesn't match the expected options shape — falls back to
+that same homogeneous options type too.
 
 ## Type Parameters
 
@@ -24608,7 +23893,7 @@ title: QueriesResults
 type QueriesResults<T, TResults, TDepth> = TDepth["length"] extends MAXIMUM_DEPTH ? UseQueryResult[] : T extends [] ? [] : T extends [infer Head] ? [...TResults, GetUseQueryResult<Head>] : T extends [infer Head, ...(infer Tails)] ? QueriesResults<[...Tails], [...TResults, GetUseQueryResult<Head>], [...TDepth, 1]> : { [K in keyof T]: GetUseQueryResult<T[K]> };
 ```
 
-Defined in: [packages/react-query/src/useQueries.ts:207](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQueries.ts#L207)
+Defined in: [packages/react-query/src/useQueries.ts:211](https://github.com/TanStack/query/blob/main/packages/react-query/src/useQueries.ts#L211)
 
 The result type returned by `useQueries`, when no `combine` is provided. Mirrors [QueriesOptions](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/QueriesOptions.md): each
 tuple element's result type is inferred individually, up to 20 elements. A non-tuple array is mapped
@@ -25130,12 +24415,16 @@ title: SuspenseQueriesOptions
 type SuspenseQueriesOptions<T, TResults, TDepth> = TDepth["length"] extends MAXIMUM_DEPTH ? UseSuspenseQueryOptions[] : T extends [] ? [] : T extends [infer Head] ? [...TResults, GetUseSuspenseQueryOptions<Head>] : T extends [infer Head, ...(infer Tails)] ? SuspenseQueriesOptions<[...Tails], [...TResults, GetUseSuspenseQueryOptions<Head>], [...TDepth, 1]> : unknown[] extends T ? T : T extends UseSuspenseQueryOptions<infer TQueryFnData, infer TError, infer TData, infer TQueryKey>[] ? UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>[] : UseSuspenseQueryOptions[];
 ```
 
-Defined in: [packages/react-query/src/useSuspenseQueries.ts:119](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQueries.ts#L119)
+Defined in: [packages/react-query/src/useSuspenseQueries.ts:123](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQueries.ts#L123)
 
 The `queries` array accepted by `useSuspenseQueries`. Recursively unwraps each tuple element so every
-entry's `queryFn`/`select` are inferred individually, up to 20 elements. An opaque array (e.g. `unknown[]`)
-is returned as-is; a non-tuple array of a known element type, or a tuple past 20 elements, falls back to a
-single homogeneous [UseSuspenseQueryOptions](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/UseSuspenseQueryOptions.md) type.
+entry's `queryFn`/`select` are inferred individually, up to 20 elements — past that, a tuple falls back to
+a single homogeneous [UseSuspenseQueryOptions](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/UseSuspenseQueryOptions.md) type.
+
+An opaque array (e.g. `unknown[]`) is returned as-is; a non-tuple array whose element type structurally
+matches a query options object is mapped per-element instead, still inferring each entry individually; any
+other non-tuple array — one whose element type doesn't match the expected options shape — falls back to
+that same homogeneous options type too.
 
 ## Type Parameters
 
@@ -25172,7 +24461,7 @@ title: SuspenseQueriesResults
 type SuspenseQueriesResults<T, TResults, TDepth> = TDepth["length"] extends MAXIMUM_DEPTH ? UseSuspenseQueryResult[] : T extends [] ? [] : T extends [infer Head] ? [...TResults, GetUseSuspenseQueryResult<Head>] : T extends [infer Head, ...(infer Tails)] ? SuspenseQueriesResults<[...Tails], [...TResults, GetUseSuspenseQueryResult<Head>], [...TDepth, 1]> : { [K in keyof T]: GetUseSuspenseQueryResult<T[K]> };
 ```
 
-Defined in: [packages/react-query/src/useSuspenseQueries.ts:165](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQueries.ts#L165)
+Defined in: [packages/react-query/src/useSuspenseQueries.ts:169](https://github.com/TanStack/query/blob/main/packages/react-query/src/useSuspenseQueries.ts#L169)
 
 The result type returned by `useSuspenseQueries`, when no `combine` is provided. Mirrors
 [SuspenseQueriesOptions](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/SuspenseQueriesOptions.md): each tuple element's result type is inferred individually, up to 20 elements.
@@ -25625,7 +24914,7 @@ type UseBaseMutationResult<TData, TError, TVariables, TOnMutateResult> = Overrid
 }> & object;
 ```
 
-Defined in: [packages/react-query/src/types.ts:471](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L471)
+Defined in: [packages/react-query/src/types.ts:472](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L472)
 
 The result of `useMutation`. Same as [MutationObserverResult](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/MutationObserverResult.md) from `@tanstack/query-core`, with
 `mutate` narrowed to the fire-and-forget [UseMutateFunction](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/UseMutateFunction.md) signature, plus the added `mutateAsync`.
@@ -25745,7 +25034,7 @@ title: UseMutateAsyncFunction
 type UseMutateAsyncFunction<TData, TError, TVariables, TOnMutateResult> = MutateFunction<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/react-query/src/types.ts:454](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L454)
+Defined in: [packages/react-query/src/types.ts:455](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L455)
 
 The type of `mutateAsync`, as returned by `useMutation`. Similar to [UseMutateFunction](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/UseMutateFunction.md), but returns a
 promise which can be awaited.
@@ -25790,7 +25079,7 @@ title: UseMutateFunction
 type UseMutateFunction<TData, TError, TVariables, TOnMutateResult> = (...args: Parameters<MutateFunction<TData, TError, TVariables, TOnMutateResult>>) => void;
 ```
 
-Defined in: [packages/react-query/src/types.ts:433](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L433)
+Defined in: [packages/react-query/src/types.ts:434](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L434)
 
 The type of `mutate`, as returned by `useMutation`. Forwards the variables (and an optional per-call
 `onSuccess`/`onError`/`onSettled`) to the underlying `mutate` call. Fire-and-forget — errors are surfaced
@@ -25846,7 +25135,7 @@ title: UseMutationResult
 type UseMutationResult<TData, TError, TVariables, TOnMutateResult> = UseBaseMutationResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/react-query/src/types.ts:500](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L500)
+Defined in: [packages/react-query/src/types.ts:501](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L501)
 
 The result of `useMutation`. Same as [UseBaseMutationResult](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/UseBaseMutationResult.md).
 
@@ -26047,7 +25336,7 @@ title: UseSuspenseInfiniteQueryResult
 type UseSuspenseInfiniteQueryResult<TData, TError> = OmitKeyof<DefinedInfiniteQueryObserverResult<TData, TError>, "isPlaceholderData">;
 ```
 
-Defined in: [packages/react-query/src/types.ts:389](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L389)
+Defined in: [packages/react-query/src/types.ts:390](https://github.com/TanStack/query/blob/main/packages/react-query/src/types.ts#L390)
 
 The result of `useSuspenseInfiniteQuery`. Same as [DefinedUseInfiniteQueryResult](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/DefinedUseInfiniteQueryResult.md), minus
 `isPlaceholderData` — Suspense hooks never render placeholder data.
