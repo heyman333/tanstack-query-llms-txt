@@ -3701,7 +3701,7 @@ If you want to run it against `.js` or `.jsx` files, please use the command belo
 ```
 npx jscodeshift@latest ./path/to/src/ \
   --extensions=js,jsx \
-  --transform=./node_modules/@tanstack/react-query/build/codemods/src/v5/remove-overloads/remove-overloads.cjs
+  --transform=./node_modules/@tanstack/react-query/build/codemods/v5/remove-overloads/remove-overloads.cjs
 ```
 
 If you want to run it against `.ts` or `.tsx` files, please use the command below:
@@ -3710,7 +3710,7 @@ If you want to run it against `.ts` or `.tsx` files, please use the command belo
 npx jscodeshift@latest ./path/to/src/ \
   --extensions=ts,tsx \
   --parser=tsx \
-  --transform=./node_modules/@tanstack/react-query/build/codemods/src/v5/remove-overloads/remove-overloads.cjs
+  --transform=./node_modules/@tanstack/react-query/build/codemods/v5/remove-overloads/remove-overloads.cjs
 ```
 
 Please note in the case of `TypeScript` you need to use `tsx` as the parser; otherwise, the codemod won't be applied properly!
@@ -10535,7 +10535,7 @@ properties you actually read" behavior.
 updateResult(): void;
 ```
 
-Defined in: [packages/query-core/src/queryObserver.ts:735](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L735)
+Defined in: [packages/query-core/src/queryObserver.ts:733](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L733)
 
 Recomputes and stores the current result from the current query/options, notifying listeners
 if it changed. Framework adapters call this right after subscribing to make sure no query
@@ -12345,7 +12345,7 @@ find<TQueryFnData, TError, TData>(filters: WithRequired<QueryFilters<readonly un
   | undefined;
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:295](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L295)
+Defined in: [packages/query-core/src/queryCache.ts:294](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L294)
 
 A slightly more advanced method that can be used to get an existing query instance from the
 cache. This instance not only contains all the state for the query, but all of the instances,
@@ -12401,7 +12401,7 @@ const query = queryCache.find({ queryKey: ['posts'] })
 findAll(filters: QueryFilters<any>): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:320](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L320)
+Defined in: [packages/query-core/src/queryCache.ts:319](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L319)
 
 An even more advanced method that can be used to get existing query instances from the cache
 that partially match a query key. If no queries match, an empty array is returned.
@@ -12494,7 +12494,7 @@ const query = queryCache.get(queryHash)
 getAll(): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
-Defined in: [packages/query-core/src/queryCache.ts:273](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L273)
+Defined in: [packages/query-core/src/queryCache.ts:272](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryCache.ts#L272)
 
 Returns all queries within the cache.
 
@@ -14636,7 +14636,7 @@ properties you actually read" behavior.
 updateResult(): void;
 ```
 
-Defined in: [packages/query-core/src/queryObserver.ts:735](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L735)
+Defined in: [packages/query-core/src/queryObserver.ts:733](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryObserver.ts#L733)
 
 Recomputes and stores the current result from the current query/options, notifying listeners
 if it changed. Framework adapters call this right after subscribing to make sure no query
@@ -15814,7 +15814,7 @@ redirect_from:
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/react-query/src/queryOptions.ts:143](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L143)
+Defined in: [packages/react-query/src/queryOptions.ts:142](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L142)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -15891,7 +15891,7 @@ function Posts() {
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>): OmitKeyof<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/react-query/src/queryOptions.ts:184](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L184)
+Defined in: [packages/react-query/src/queryOptions.ts:183](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L183)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -15960,7 +15960,7 @@ function Post({ id }: { id: string }) {
 function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
-Defined in: [packages/react-query/src/queryOptions.ts:248](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L248)
+Defined in: [packages/react-query/src/queryOptions.ts:247](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L247)
 
 You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
 be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
@@ -18856,7 +18856,7 @@ id: CancelOptions
 title: CancelOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:1645](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1645)
+Defined in: [packages/query-core/src/types.ts:1639](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1639)
 
 Options for cancelling an in-flight fetch, e.g. via `query.cancel()`.
 They are carried on the [CancelledError](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/CancelledError.md) that the cancelled fetch rejects with.
@@ -18877,7 +18877,7 @@ id: DefaultOptions
 title: DefaultOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:1627](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1627)
+Defined in: [packages/query-core/src/types.ts:1621](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1621)
 
 ## Type Parameters
 
@@ -18951,7 +18951,7 @@ id: EnsureQueryDataOptions
 title: EnsureQueryDataOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:673](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L673)
+Defined in: [packages/query-core/src/types.ts:670](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L670)
 
 ## Deprecated
 
@@ -19012,7 +19012,7 @@ id: FetchNextPageOptions
 title: FetchNextPageOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:797](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L797)
+Defined in: [packages/query-core/src/types.ts:794](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L794)
 
 ## Extends
 
@@ -19034,7 +19034,7 @@ id: FetchPreviousPageOptions
 title: FetchPreviousPageOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:809](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L809)
+Defined in: [packages/query-core/src/types.ts:806](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L806)
 
 ## Extends
 
@@ -19056,7 +19056,7 @@ id: FetchQueryOptions
 title: FetchQueryOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:654](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L654)
+Defined in: [packages/query-core/src/types.ts:651](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L651)
 
 ## Deprecated
 
@@ -19372,7 +19372,7 @@ id: InfiniteData
 title: InfiniteData
 ---
 
-Defined in: [packages/query-core/src/types.ts:251](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L251)
+Defined in: [packages/query-core/src/types.ts:249](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L249)
 
 The data shape of an infinite query: every page fetched so far, plus the page param each one was fetched with.
 `pages` and `pageParams` are index-aligned — `pageParams[i]` is the param that produced `pages[i]`.
@@ -19403,7 +19403,7 @@ id: InfiniteQueryObserverBaseResult
 title: InfiniteQueryObserverBaseResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1063](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1063)
+Defined in: [packages/query-core/src/types.ts:1057](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1057)
 
 ## Extends
 
@@ -19475,7 +19475,7 @@ id: InfiniteQueryObserverLoadingErrorResult
 title: InfiniteQueryObserverLoadingErrorResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1140](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1140)
+Defined in: [packages/query-core/src/types.ts:1134](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1134)
 
 ## Extends
 
@@ -19538,7 +19538,7 @@ id: InfiniteQueryObserverLoadingResult
 title: InfiniteQueryObserverLoadingResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1122](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1122)
+Defined in: [packages/query-core/src/types.ts:1116](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1116)
 
 ## Extends
 
@@ -19601,7 +19601,7 @@ id: InfiniteQueryObserverOptions
 title: InfiniteQueryObserverOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:594](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L594)
+Defined in: [packages/query-core/src/types.ts:591](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L591)
 
 ## Extends
 
@@ -19673,7 +19673,7 @@ id: InfiniteQueryObserverPendingResult
 title: InfiniteQueryObserverPendingResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1105](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1105)
+Defined in: [packages/query-core/src/types.ts:1099](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1099)
 
 ## Extends
 
@@ -19736,7 +19736,7 @@ id: InfiniteQueryObserverPlaceholderResult
 title: InfiniteQueryObserverPlaceholderResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1192](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1192)
+Defined in: [packages/query-core/src/types.ts:1186](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1186)
 
 ## Extends
 
@@ -19799,7 +19799,7 @@ id: InfiniteQueryObserverRefetchErrorResult
 title: InfiniteQueryObserverRefetchErrorResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1158](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1158)
+Defined in: [packages/query-core/src/types.ts:1152](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1152)
 
 ## Extends
 
@@ -19862,7 +19862,7 @@ id: InfiniteQueryObserverSuccessResult
 title: InfiniteQueryObserverSuccessResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1174](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1174)
+Defined in: [packages/query-core/src/types.ts:1168](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1168)
 
 ## Extends
 
@@ -19925,7 +19925,7 @@ id: InfiniteQueryPageParamsOptions
 title: InfiniteQueryPageParamsOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:406](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L406)
+Defined in: [packages/query-core/src/types.ts:403](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L403)
 
 ## Extends
 
@@ -19962,7 +19962,7 @@ id: InitialPageParam
 title: InitialPageParam
 ---
 
-Defined in: [packages/query-core/src/types.ts:395](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L395)
+Defined in: [packages/query-core/src/types.ts:392](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L392)
 
 ## Extended by
 
@@ -19989,7 +19989,7 @@ id: InvalidateOptions
 title: InvalidateOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:794](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L794)
+Defined in: [packages/query-core/src/types.ts:791](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L791)
 
 ## Extends
 
@@ -20011,7 +20011,7 @@ id: InvalidateQueryFilters
 title: InvalidateQueryFilters
 ---
 
-Defined in: [packages/query-core/src/types.ts:774](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L774)
+Defined in: [packages/query-core/src/types.ts:771](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L771)
 
 Filters used to select queries, for example in `queryClient.getQueriesData` or `queryClient.invalidateQueries`.
 All provided filters must match; filters that are left unspecified are ignored.
@@ -20047,7 +20047,7 @@ id: MutateOptions
 title: MutateOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:1404](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1404)
+Defined in: [packages/query-core/src/types.ts:1398](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1398)
 
 ## Type Parameters
 
@@ -20152,7 +20152,7 @@ id: MutationObserverBaseResult
 title: MutationObserverBaseResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1455](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1455)
+Defined in: [packages/query-core/src/types.ts:1449](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1449)
 
 The raw state stored on a `Mutation` instance. This is the underlying state
 that observer results (e.g. `MutationObserverResult`) are derived from.
@@ -20215,7 +20215,7 @@ id: MutationObserverErrorResult
 title: MutationObserverErrorResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1562](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1562)
+Defined in: [packages/query-core/src/types.ts:1556](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1556)
 
 The raw state stored on a `Mutation` instance. This is the underlying state
 that observer results (e.g. `MutationObserverResult`) are derived from.
@@ -20271,7 +20271,7 @@ id: MutationObserverIdleResult
 title: MutationObserverIdleResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1520](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1520)
+Defined in: [packages/query-core/src/types.ts:1514](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1514)
 
 The raw state stored on a `Mutation` instance. This is the underlying state
 that observer results (e.g. `MutationObserverResult`) are derived from.
@@ -20327,7 +20327,7 @@ id: MutationObserverLoadingResult
 title: MutationObserverLoadingResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1541](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1541)
+Defined in: [packages/query-core/src/types.ts:1535](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1535)
 
 The raw state stored on a `Mutation` instance. This is the underlying state
 that observer results (e.g. `MutationObserverResult`) are derived from.
@@ -20383,7 +20383,7 @@ id: MutationObserverOptions
 title: MutationObserverOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:1387](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1387)
+Defined in: [packages/query-core/src/types.ts:1381](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1381)
 
 ## Extends
 
@@ -20434,7 +20434,7 @@ id: MutationObserverSuccessResult
 title: MutationObserverSuccessResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1583](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1583)
+Defined in: [packages/query-core/src/types.ts:1577](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1577)
 
 The raw state stored on a `Mutation` instance. This is the underlying state
 that observer results (e.g. `MutationObserverResult`) are derived from.
@@ -20490,7 +20490,7 @@ id: MutationOptions
 title: MutationOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:1277](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1277)
+Defined in: [packages/query-core/src/types.ts:1271](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1271)
 
 ## Extended by
 
@@ -20590,7 +20590,7 @@ id: NotifyEvent
 title: NotifyEvent
 ---
 
-Defined in: [packages/query-core/src/types.ts:1669](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1669)
+Defined in: [packages/query-core/src/types.ts:1663](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1663)
 
 ## Properties
 
@@ -20838,7 +20838,7 @@ id: QueryClientConfig
 title: QueryClientConfig
 ---
 
-Defined in: [packages/query-core/src/types.ts:1615](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1615)
+Defined in: [packages/query-core/src/types.ts:1609](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1609)
 
 ## Properties
 
@@ -20876,7 +20876,7 @@ id: QueryExecuteOptions
 title: QueryExecuteOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:629](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L629)
+Defined in: [packages/query-core/src/types.ts:626](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L626)
 
 ## Extends
 
@@ -20975,7 +20975,7 @@ id: QueryObserverBaseResult
 title: QueryObserverBaseResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:826](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L826)
+Defined in: [packages/query-core/src/types.ts:823](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L823)
 
 ## Extended by
 
@@ -21036,7 +21036,7 @@ id: QueryObserverLoadingErrorResult
 title: QueryObserverLoadingErrorResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:985](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L985)
+Defined in: [packages/query-core/src/types.ts:982](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L982)
 
 ## Extends
 
@@ -21091,7 +21091,7 @@ id: QueryObserverLoadingResult
 title: QueryObserverLoadingResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:969](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L969)
+Defined in: [packages/query-core/src/types.ts:966](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L966)
 
 ## Extends
 
@@ -21146,7 +21146,7 @@ id: QueryObserverOptions
 title: QueryObserverOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:435](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L435)
+Defined in: [packages/query-core/src/types.ts:432](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L432)
 
 ## Extends
 
@@ -21224,7 +21224,7 @@ id: QueryObserverPendingResult
 title: QueryObserverPendingResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:954](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L954)
+Defined in: [packages/query-core/src/types.ts:951](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L951)
 
 ## Extends
 
@@ -21279,7 +21279,7 @@ id: QueryObserverPlaceholderResult
 title: QueryObserverPlaceholderResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1033](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1033)
+Defined in: [packages/query-core/src/types.ts:1030](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1030)
 
 ## Extends
 
@@ -21334,7 +21334,7 @@ id: QueryObserverRefetchErrorResult
 title: QueryObserverRefetchErrorResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1001](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1001)
+Defined in: [packages/query-core/src/types.ts:998](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L998)
 
 ## Extends
 
@@ -21389,7 +21389,7 @@ id: QueryObserverSuccessResult
 title: QueryObserverSuccessResult
 ---
 
-Defined in: [packages/query-core/src/types.ts:1017](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1017)
+Defined in: [packages/query-core/src/types.ts:1014](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1014)
 
 ## Extends
 
@@ -21444,7 +21444,7 @@ id: QueryOptions
 title: QueryOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:278](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L278)
+Defined in: [packages/query-core/src/types.ts:276](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L276)
 
 ## Type Parameters
 
@@ -21537,7 +21537,7 @@ id: RefetchOptions
 title: RefetchOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:763](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L763)
+Defined in: [packages/query-core/src/types.ts:760](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L760)
 
 ## Extends
 
@@ -21564,7 +21564,7 @@ id: RefetchQueryFilters
 title: RefetchQueryFilters
 ---
 
-Defined in: [packages/query-core/src/types.ts:790](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L790)
+Defined in: [packages/query-core/src/types.ts:787](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L787)
 
 Filters used to select queries, for example in `queryClient.getQueriesData` or `queryClient.invalidateQueries`.
 All provided filters must match; filters that are left unspecified are ignored.
@@ -21599,7 +21599,7 @@ id: Register
 title: Register
 ---
 
-Defined in: [packages/query-core/src/types.ts:56](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L56)
+Defined in: [packages/query-core/src/types.ts:55](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L55)
 
 The interface to augment via declaration merging to override Query's default types repository-wide.
 Each field it declares replaces the default of the matching type: `defaultError` for [DefaultError](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/DefaultError.md),
@@ -21630,7 +21630,7 @@ id: ResetOptions
 title: ResetOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:795](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L795)
+Defined in: [packages/query-core/src/types.ts:792](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L792)
 
 ## Extends
 
@@ -21652,7 +21652,7 @@ id: ResultOptions
 title: ResultOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:753](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L753)
+Defined in: [packages/query-core/src/types.ts:750](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L750)
 
 ## Extended by
 
@@ -21675,7 +21675,7 @@ id: SetDataOptions
 title: SetDataOptions
 ---
 
-Defined in: [packages/query-core/src/types.ts:1655](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1655)
+Defined in: [packages/query-core/src/types.ts:1649](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1649)
 
 Options for writing data into the cache, e.g. via `queryClient.setQueryData()`.
 `updatedAt` overrides the timestamp the data is recorded with, which is what staleness is measured from;
@@ -22424,7 +22424,7 @@ title: AnyDataTag
 type AnyDataTag = object;
 ```
 
-Defined in: [packages/query-core/src/types.ts:94](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L94)
+Defined in: [packages/query-core/src/types.ts:93](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L93)
 
 ## Properties
 
@@ -22554,7 +22554,7 @@ title: DataTag
 type DataTag<TType, TValue, TError> = TType extends AnyDataTag ? TType : TType & object;
 ```
 
-Defined in: [packages/query-core/src/types.ts:98](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L98)
+Defined in: [packages/query-core/src/types.ts:97](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L97)
 
 ## Type Parameters
 
@@ -22583,7 +22583,7 @@ title: dataTagErrorSymbol
 type dataTagErrorSymbol = typeof dataTagErrorSymbol;
 ```
 
-Defined in: [packages/query-core/src/types.ts:90](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L90)
+Defined in: [packages/query-core/src/types.ts:89](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L89)
 
 ### docs/framework/react/reference/type-aliases/dataTagSymbol.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/dataTagSymbol.md
@@ -22598,7 +22598,7 @@ title: dataTagSymbol
 type dataTagSymbol = typeof dataTagSymbol;
 ```
 
-Defined in: [packages/query-core/src/types.ts:88](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L88)
+Defined in: [packages/query-core/src/types.ts:87](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L87)
 
 ### docs/framework/react/reference/type-aliases/DefaultedInfiniteQueryObserverOptions.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/DefaultedInfiniteQueryObserverOptions.md
@@ -22613,7 +22613,7 @@ title: DefaultedInfiniteQueryObserverOptions
 type DefaultedInfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = WithRequired<InfiniteQueryObserverOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "throwOnError" | "refetchOnReconnect" | "queryHash">;
 ```
 
-Defined in: [packages/query-core/src/types.ts:612](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L612)
+Defined in: [packages/query-core/src/types.ts:609](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L609)
 
 ## Type Parameters
 
@@ -22650,7 +22650,7 @@ title: DefaultedQueryObserverOptions
 type DefaultedQueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> = WithRequired<QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>, "throwOnError" | "refetchOnReconnect" | "queryHash">;
 ```
 
-Defined in: [packages/query-core/src/types.ts:583](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L583)
+Defined in: [packages/query-core/src/types.ts:580](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L580)
 
 ## Type Parameters
 
@@ -22687,7 +22687,7 @@ title: DefaultError
 type DefaultError = Register extends object ? TError : Error;
 ```
 
-Defined in: [packages/query-core/src/types.ts:68](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L68)
+Defined in: [packages/query-core/src/types.ts:67](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L67)
 
 The error type used wherever an error is not given an explicit type parameter.
 Defaults to `Error`; declare `defaultError` on [Register](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/Register.md) to change it everywhere at once.
@@ -22707,7 +22707,7 @@ type DefinedInfiniteQueryObserverResult<TData, TError> =
 | InfiniteQueryObserverSuccessResult<TData, TError>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1210](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1210)
+Defined in: [packages/query-core/src/types.ts:1204](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1204)
 
 ## Type Parameters
 
@@ -22872,7 +22872,7 @@ type DefinedQueryObserverResult<TData, TError> =
 | QueryObserverSuccessResult<TData, TError>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1049](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1049)
+Defined in: [packages/query-core/src/types.ts:1046](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1046)
 
 ## Type Parameters
 
@@ -22988,7 +22988,7 @@ title: EnsureInfiniteQueryDataOptions
 type EnsureInfiniteQueryDataOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object;
 ```
 
-Defined in: [packages/query-core/src/types.ts:690](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L690)
+Defined in: [packages/query-core/src/types.ts:687](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L687)
 
 ## Type Declaration
 
@@ -23035,7 +23035,7 @@ title: FetchInfiniteQueryOptions
 type FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = Omit<FetchQueryOptions<TQueryFnData, TError, InfiniteData<TData, TPageParam>, TQueryKey, TPageParam>, "initialPageParam"> & InitialPageParam<TPageParam> & InfiniteQueryPages<TQueryFnData, TPageParam>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:734](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L734)
+Defined in: [packages/query-core/src/types.ts:731](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L731)
 
 ## Type Parameters
 
@@ -23074,7 +23074,7 @@ title: FetchStatus
 type FetchStatus = "fetching" | "paused" | "idle";
 ```
 
-Defined in: [packages/query-core/src/types.ts:824](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L824)
+Defined in: [packages/query-core/src/types.ts:821](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L821)
 
 ### docs/framework/react/reference/type-aliases/GetNextPageParamFunction.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/GetNextPageParamFunction.md
@@ -23089,7 +23089,7 @@ title: GetNextPageParamFunction
 type GetNextPageParamFunction<TPageParam, TQueryFnData> = (lastPage: TQueryFnData, allPages: TQueryFnData[], lastPageParam: TPageParam, allPageParams: TPageParam[]) => TPageParam | undefined | null;
 ```
 
-Defined in: [packages/query-core/src/types.ts:240](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L240)
+Defined in: [packages/query-core/src/types.ts:238](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L238)
 
 ## Type Parameters
 
@@ -23136,7 +23136,7 @@ title: GetPreviousPageParamFunction
 type GetPreviousPageParamFunction<TPageParam, TQueryFnData> = (firstPage: TQueryFnData, allPages: TQueryFnData[], firstPageParam: TPageParam, allPageParams: TPageParam[]) => TPageParam | undefined | null;
 ```
 
-Defined in: [packages/query-core/src/types.ts:232](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L232)
+Defined in: [packages/query-core/src/types.ts:230](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L230)
 
 ## Type Parameters
 
@@ -23183,7 +23183,7 @@ title: InferDataFromTag
 type InferDataFromTag<TQueryFnData, TTaggedQueryKey> = TTaggedQueryKey extends DataTag<unknown, infer TaggedValue, unknown> ? TaggedValue : TQueryFnData;
 ```
 
-Defined in: [packages/query-core/src/types.ts:117](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L117)
+Defined in: [packages/query-core/src/types.ts:116](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L116)
 
 ## Type Parameters
 
@@ -23208,7 +23208,7 @@ title: InferErrorFromTag
 type InferErrorFromTag<TError, TTaggedQueryKey> = TTaggedQueryKey extends DataTag<unknown, unknown, infer TaggedError> ? TaggedError extends UnsetMarker ? TError : TaggedError : TError;
 ```
 
-Defined in: [packages/query-core/src/types.ts:122](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L122)
+Defined in: [packages/query-core/src/types.ts:121](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L121)
 
 ## Type Parameters
 
@@ -23233,7 +23233,7 @@ title: InfiniteQueryExecuteOptions
 type InfiniteQueryExecuteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> = Omit<QueryExecuteOptions<TQueryFnData, TError, TData, InfiniteData<TQueryFnData, TPageParam>, TQueryKey, TPageParam>, "initialPageParam"> & InitialPageParam<TPageParam> & InfiniteQueryPages<TQueryFnData, TPageParam>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:713](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L713)
+Defined in: [packages/query-core/src/types.ts:710](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L710)
 
 ## Type Parameters
 
@@ -23275,7 +23275,7 @@ type InfiniteQueryObserverResult<TData, TError> =
 | InfiniteQueryObserverPlaceholderResult<TData, TError>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1217](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1217)
+Defined in: [packages/query-core/src/types.ts:1211](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1211)
 
 ## Type Parameters
 
@@ -23300,7 +23300,7 @@ title: InitialDataFunction
 type InitialDataFunction<T> = () => T | undefined;
 ```
 
-Defined in: [packages/query-core/src/types.ts:206](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L206)
+Defined in: [packages/query-core/src/types.ts:204](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L204)
 
 ## Type Parameters
 
@@ -23349,7 +23349,7 @@ title: MutateFunction
 type MutateFunction<TData, TError, TVariables, TOnMutateResult> = (...rest: MutateFunctionRest<TData, TError, TVariables, TOnMutateResult>) => Promise<TData>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1446](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1446)
+Defined in: [packages/query-core/src/types.ts:1440](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1440)
 
 ## Type Parameters
 
@@ -23392,7 +23392,7 @@ title: MutateFunctionRest
 type MutateFunctionRest<TData, TError, TVariables, TOnMutateResult> = undefined extends TVariables ? [TVariables, MutateOptions<TData, TError, TVariables, TOnMutateResult>] : [TVariables, MutateOptions<TData, TError, TVariables, TOnMutateResult>];
 ```
 
-Defined in: [packages/query-core/src/types.ts:1431](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1431)
+Defined in: [packages/query-core/src/types.ts:1425](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1425)
 
 ## Type Parameters
 
@@ -23450,7 +23450,7 @@ title: MutationFunction
 type MutationFunction<TData, TVariables> = (variables: TVariables, context: MutationFunctionContext) => Promise<TData>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1272](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1272)
+Defined in: [packages/query-core/src/types.ts:1266](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1266)
 
 ## Type Parameters
 
@@ -23489,7 +23489,7 @@ title: MutationFunctionContext
 type MutationFunctionContext = object;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1265](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1265)
+Defined in: [packages/query-core/src/types.ts:1259](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1259)
 
 ## Properties
 
@@ -23512,7 +23512,7 @@ title: MutationKey
 type MutationKey = Register extends object ? TMutationKey extends ReadonlyArray<unknown> ? TMutationKey : TMutationKey extends unknown[] ? TMutationKey : ReadonlyArray<unknown> : ReadonlyArray<unknown>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1231](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1231)
+Defined in: [packages/query-core/src/types.ts:1225](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1225)
 
 The type of a mutation key — the serializable array used to identify and filter mutations.
 Defaults to `ReadonlyArray<unknown>`; declare `mutationKey` on [Register](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/Register.md) to narrow it repository-wide.
@@ -23530,7 +23530,7 @@ title: MutationMeta
 type MutationMeta = Register extends object ? TMutationMeta extends Record<string, unknown> ? TMutationMeta : Record<string, unknown> : Record<string, unknown>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1257](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1257)
+Defined in: [packages/query-core/src/types.ts:1251](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1251)
 
 The type of the `meta` object that can be attached to a mutation and read back from `mutationFn`, callbacks and
 cache-level handlers. Defaults to `Record<string, unknown>`; declare `mutationMeta` on [Register](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/Register.md) to narrow it.
@@ -23552,7 +23552,7 @@ type MutationObserverResult<TData, TError, TVariables, TOnMutateResult> =
 | MutationObserverSuccessResult<TData, TError, TVariables, TOnMutateResult>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1604](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1604)
+Defined in: [packages/query-core/src/types.ts:1598](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1598)
 
 ## Type Parameters
 
@@ -23585,7 +23585,7 @@ title: MutationScope
 type MutationScope = object;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1249](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1249)
+Defined in: [packages/query-core/src/types.ts:1243](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1243)
 
 Groups mutations so they run one after another instead of in parallel.
 Mutations that share the same `id` form a queue: while one is running, the others wait in `isPaused: true`
@@ -23610,7 +23610,7 @@ title: MutationStatus
 type MutationStatus = "idle" | "pending" | "success" | "error";
 ```
 
-Defined in: [packages/query-core/src/types.ts:1242](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1242)
+Defined in: [packages/query-core/src/types.ts:1236](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1236)
 
 ### docs/framework/react/reference/type-aliases/NetworkMode.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/NetworkMode.md
@@ -23625,7 +23625,7 @@ title: NetworkMode
 type NetworkMode = "online" | "always" | "offlineFirst";
 ```
 
-Defined in: [packages/query-core/src/types.ts:269](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L269)
+Defined in: [packages/query-core/src/types.ts:267](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L267)
 
 ### docs/framework/react/reference/type-aliases/NonUndefinedGuard.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/NonUndefinedGuard.md
@@ -23668,7 +23668,7 @@ type NotifyEventType =
   | "observerOptionsUpdated";
 ```
 
-Defined in: [packages/query-core/src/types.ts:1660](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1660)
+Defined in: [packages/query-core/src/types.ts:1654](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1654)
 
 ### docs/framework/react/reference/type-aliases/NotifyOnChangeProps.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/NotifyOnChangeProps.md
@@ -23690,7 +23690,7 @@ type NotifyOnChangeProps =
   | undefined;
 ```
 
-Defined in: [packages/query-core/src/types.ts:272](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L272)
+Defined in: [packages/query-core/src/types.ts:270](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L270)
 
 ### docs/framework/react/reference/type-aliases/OmitKeyof.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/OmitKeyof.md
@@ -23738,7 +23738,7 @@ title: Override
 type Override<TTargetA, TTargetB> = { [AKey in keyof TTargetA]: AKey extends keyof TTargetB ? TTargetB[AKey] : TTargetA[AKey] };
 ```
 
-Defined in: [packages/query-core/src/types.ts:31](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L31)
+Defined in: [packages/query-core/src/types.ts:30](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L30)
 
 ## Type Parameters
 
@@ -23765,7 +23765,7 @@ type PlaceholderDataFunction<TQueryFnData, TError, TQueryData, TQueryKey> = (pre
   | undefined) => TQueryData | undefined;
 ```
 
-Defined in: [packages/query-core/src/types.ts:211](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L211)
+Defined in: [packages/query-core/src/types.ts:209](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L209)
 
 ## Type Parameters
 
@@ -23858,7 +23858,7 @@ title: QueriesPlaceholderDataFunction
 type QueriesPlaceholderDataFunction<TQueryData> = (previousData: undefined, previousQuery: undefined) => TQueryData | undefined;
 ```
 
-Defined in: [packages/query-core/src/types.ts:221](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L221)
+Defined in: [packages/query-core/src/types.ts:219](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L219)
 
 ## Type Parameters
 
@@ -23937,7 +23937,7 @@ type QueryBooleanOption<TQueryFnData, TError, TData, TQueryKey> =
   | (query: Query<TQueryFnData, TError, TData, TQueryKey>) => boolean;
 ```
 
-Defined in: [packages/query-core/src/types.ts:150](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L150)
+Defined in: [packages/query-core/src/types.ts:149](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L149)
 
 ## Type Parameters
 
@@ -24108,7 +24108,7 @@ title: QueryFunction
 type QueryFunction<T, TQueryKey, TPageParam> = (context: QueryFunctionContext<TQueryKey, TPageParam>) => T | Promise<T>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:130](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L130)
+Defined in: [packages/query-core/src/types.ts:129](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L129)
 
 ## Type Parameters
 
@@ -24147,7 +24147,7 @@ title: QueryFunctionContext
 type QueryFunctionContext<TQueryKey, TPageParam> = [TPageParam] extends [never] ? object : object;
 ```
 
-Defined in: [packages/query-core/src/types.ts:176](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L176)
+Defined in: [packages/query-core/src/types.ts:174](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L174)
 
 ## Type Parameters
 
@@ -24172,7 +24172,7 @@ title: QueryKey
 type QueryKey = Register extends object ? TQueryKey extends ReadonlyArray<unknown> ? TQueryKey : TQueryKey extends unknown[] ? TQueryKey : ReadonlyArray<unknown> : ReadonlyArray<unknown>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:78](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L78)
+Defined in: [packages/query-core/src/types.ts:77](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L77)
 
 The type of a query key — the serializable array that identifies a query in the cache.
 Defaults to `ReadonlyArray<unknown>`; declare `queryKey` on [Register](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/Register.md) to narrow it repository-wide.
@@ -24190,7 +24190,7 @@ title: QueryKeyHashFunction
 type QueryKeyHashFunction<TQueryKey> = (queryKey: TQueryKey) => string;
 ```
 
-Defined in: [packages/query-core/src/types.ts:227](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L227)
+Defined in: [packages/query-core/src/types.ts:225](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L225)
 
 ## Type Parameters
 
@@ -24221,7 +24221,7 @@ title: QueryKeyWithDataTag
 type QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError> = object;
 ```
 
-Defined in: [packages/query-core/src/types.ts:109](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L109)
+Defined in: [packages/query-core/src/types.ts:108](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L108)
 
 ## Type Parameters
 
@@ -24256,7 +24256,7 @@ title: QueryMeta
 type QueryMeta = Register extends object ? TQueryMeta extends Record<string, unknown> ? TQueryMeta : Record<string, unknown> : Record<string, unknown>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:260](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L260)
+Defined in: [packages/query-core/src/types.ts:258](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L258)
 
 The type of the `meta` object that can be attached to a query and read back from `queryFn`, callbacks and
 cache-level handlers. Defaults to `Record<string, unknown>`; declare `queryMeta` on [Register](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/Register.md) to narrow it.
@@ -24279,7 +24279,7 @@ type QueryObserverResult<TData, TError> =
 | QueryObserverPlaceholderResult<TData, TError>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:1056](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1056)
+Defined in: [packages/query-core/src/types.ts:1050](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L1050)
 
 ## Type Parameters
 
@@ -24304,7 +24304,7 @@ title: QueryPersister
 type QueryPersister<T, TQueryKey, TPageParam> = [TPageParam] extends [never] ? (queryFn: QueryFunction<T, TQueryKey, never>, context: QueryFunctionContext<TQueryKey>, query: Query) => T | Promise<T> : (queryFn: QueryFunction<T, TQueryKey, TPageParam>, context: QueryFunctionContext<TQueryKey>, query: Query) => T | Promise<T>;
 ```
 
-Defined in: [packages/query-core/src/types.ts:160](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L160)
+Defined in: [packages/query-core/src/types.ts:158](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L158)
 
 ## Type Parameters
 
@@ -24333,7 +24333,7 @@ title: QueryStatus
 type QueryStatus = "pending" | "error" | "success";
 ```
 
-Defined in: [packages/query-core/src/types.ts:822](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L822)
+Defined in: [packages/query-core/src/types.ts:819](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L819)
 
 ### docs/framework/react/reference/type-aliases/SkipToken.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/SkipToken.md
@@ -24365,7 +24365,7 @@ title: StaleTime
 type StaleTime = number | "static";
 ```
 
-Defined in: [packages/query-core/src/types.ts:137](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L137)
+Defined in: [packages/query-core/src/types.ts:136](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L136)
 
 ### docs/framework/react/reference/type-aliases/StaleTimeFunction.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/StaleTimeFunction.md
@@ -24382,7 +24382,7 @@ type StaleTimeFunction<TQueryFnData, TError, TData, TQueryKey> =
   | (query: Query<TQueryFnData, TError, TData, TQueryKey>) => number | "static";
 ```
 
-Defined in: [packages/query-core/src/types.ts:140](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L140)
+Defined in: [packages/query-core/src/types.ts:139](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L139)
 
 ## Type Parameters
 
@@ -24505,7 +24505,7 @@ type ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey> =
   | (error: TError, query: Query<TQueryFnData, TError, TQueryData, TQueryKey>) => boolean;
 ```
 
-Defined in: [packages/query-core/src/types.ts:423](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L423)
+Defined in: [packages/query-core/src/types.ts:420](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L420)
 
 ## Type Parameters
 
@@ -24735,7 +24735,7 @@ title: UnsetMarker
 type UnsetMarker = typeof unsetMarker;
 ```
 
-Defined in: [packages/query-core/src/types.ts:93](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L93)
+Defined in: [packages/query-core/src/types.ts:92](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L92)
 
 ### docs/framework/react/reference/type-aliases/UnusedSkipTokenInfiniteOptions.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/UnusedSkipTokenInfiniteOptions.md
@@ -25400,7 +25400,7 @@ title: WithRequired
 type WithRequired<TTarget, TKey> = TTarget & { [_ in TKey]: {} };
 ```
 
-Defined in: [packages/query-core/src/types.ts:579](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L579)
+Defined in: [packages/query-core/src/types.ts:576](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L576)
 
 ## Type Parameters
 
@@ -25425,7 +25425,7 @@ title: dataTagErrorSymbol
 const dataTagErrorSymbol: typeof dataTagErrorSymbol;
 ```
 
-Defined in: [packages/query-core/src/types.ts:90](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L90)
+Defined in: [packages/query-core/src/types.ts:89](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L89)
 
 ### docs/framework/react/reference/variables/dataTagSymbol.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/reference/variables/dataTagSymbol.md
@@ -25440,7 +25440,7 @@ title: dataTagSymbol
 const dataTagSymbol: typeof dataTagSymbol;
 ```
 
-Defined in: [packages/query-core/src/types.ts:88](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L88)
+Defined in: [packages/query-core/src/types.ts:87](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L87)
 
 ### docs/framework/react/reference/variables/defaultScheduler.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/reference/variables/defaultScheduler.md
@@ -25846,7 +25846,7 @@ title: unsetMarker
 const unsetMarker: typeof unsetMarker;
 ```
 
-Defined in: [packages/query-core/src/types.ts:92](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L92)
+Defined in: [packages/query-core/src/types.ts:91](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L91)
 
 ### docs/framework/react/typescript.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/typescript.md
