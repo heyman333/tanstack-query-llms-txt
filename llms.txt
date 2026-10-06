@@ -15135,11 +15135,31 @@ The client whose cache is dehydrated.
 Controls which queries and mutations are included and how their data and errors
 are transformed. Each option falls back to the client's `defaultOptions.dehydrate`.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="options-property-serializedata"></a> `serializeData?` | `TransformerFn` | Transforms a query's `data` before it is dehydrated. Useful for non-JSON-serializable data. |
+| <a id="options-property-shoulddehydratemutation"></a> `shouldDehydrateMutation?` | (`mutation`: [`Mutation`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Mutation.md)) => `boolean` | Predicate to decide whether a given `Mutation` should be dehydrated. Defaults to `defaultShouldDehydrateMutation`. |
+| <a id="options-property-shoulddehydratequery"></a> `shouldDehydrateQuery?` | (`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)) => `boolean` | Predicate to decide whether a given `Query` should be dehydrated. Defaults to `defaultShouldDehydrateQuery`. |
+| <a id="options-property-shouldredacterrors"></a> `shouldRedactErrors?` | (`error`: `unknown`) => `boolean` | Predicate to decide whether a query's error should be redacted before dehydration. Errors are redacted (replaced with a generic `Error('redacted')`) unless this function is provided and returns `false` for the given error, in which case the original error is kept. |
+
 ## Returns
 
 [`DehydratedState`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/DehydratedState.md)
 
 The dehydrated state, with the included `queries` and `mutations`.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="result-property-mutations"></a> `mutations` | `DehydratedMutation`[] | The dehydrated mutations, by default only the paused ones. |
+| <a id="result-property-queries"></a> `queries` | `DehydratedQuery`[] | The dehydrated queries, by default only the successful ones. |
 
 ## Example
 
@@ -15345,12 +15365,29 @@ The client whose cache is restored into.
 
 The dehydrated state, e.g. produced by `dehydrate` on the server.
 
+<a id="dehydratedState-properties"></a>
+
+#### `dehydratedState` properties
+
+Built from [`DehydratedState`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/DehydratedState.md#properties). See the type above for what it changes.
+
 ### options?
 
 [`HydrateOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/HydrateOptions.md)
 
 `defaultOptions` merged into every restored query and mutation (on top of the
 client's `defaultOptions.hydrate`), and `deserializeData` to reverse `serializeData`.
+
+<a id="options-properties"></a>
+
+#### `options` properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="options-property-defaultoptions"></a> `defaultOptions?` | `object` | Options applied to the queries and mutations restored from the dehydrated state. |
+| `defaultOptions.deserializeData?` | `TransformerFn` | Transforms a query's `data` after it is read from the dehydrated state, reversing `serializeData`. |
+| `defaultOptions.mutations?` | [`MutationOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/MutationOptions.md)\<`unknown`, `Error`, `unknown`, `unknown`\> | Default options merged into every mutation restored from the dehydrated state. |
+| `defaultOptions.queries?` | [`QueryOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/QueryOptions.md)\<`unknown`, `Error`, `unknown`, readonly `unknown`[], `never`\> | Default options merged into every query restored from the dehydrated state. |
 
 ## Returns
 
@@ -15395,6 +15432,17 @@ Note: Only `queries` can be dehydrated with an `HydrationBoundary`.
 
 The dehydrated `state` to hydrate, the hydrate `options`, an optional custom
 `queryClient`, and the `children` to render.
+
+<a id="props-properties"></a>
+
+#### `props` properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="props-property-children"></a> `children?` | `ReactNode` | The components to render — always rendered unconditionally, not gated on hydration. New queries are hydrated into the cache during render; for queries that already exist in the cache, only newer dehydrated data is hydrated, and that happens in an effect after commit, so `children` may render briefly before it lands. |
+| <a id="props-property-options"></a> `options?` | [`OmitKeyof`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/OmitKeyof.md)\<[`HydrateOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/HydrateOptions.md), `"defaultOptions"`\> & `object` | Optional. Note: unlike `hydrate`, `mutations` cannot be set here. |
+| <a id="props-property-queryclient"></a> `queryClient?` | [`QueryClient`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryClient.md) | Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will be used. |
+| <a id="props-property-state"></a> `state` | [`DehydratedState`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/DehydratedState.md) \| `null` \| `undefined` | The state to hydrate. |
 
 ## Returns
 
@@ -15447,10 +15495,26 @@ redirect_from:
   - framework/react/reference/infiniteQueryOptions
 ---
 
+## Overview
+
+```ts
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>;
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UnusedSkipTokenInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): UnusedSkipTokenInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>;
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>;
+```
+
+- [`DefinedInitialDataInfiniteOptions` → `DefinedInitialDataInfiniteOptions & QueryKeyWithDataTag`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/infiniteQueryOptions.md#call-signature-1): You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`. These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`. `options.queryKey` is required and is the query key to generate options for.
+- [`UnusedSkipTokenInfiniteOptions` → `UnusedSkipTokenInfiniteOptions & QueryKeyWithDataTag`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/infiniteQueryOptions.md#call-signature-2): You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`. These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`. `options.queryKey` is required and is the query key to generate options for.
+- [`UndefinedInitialDataInfiniteOptions` → `UndefinedInitialDataInfiniteOptions & QueryKeyWithDataTag`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/infiniteQueryOptions.md#call-signature-3): You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`. These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`. `options.queryKey` is required and is the query key to generate options for.
+
+See also: [Parameters](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/infiniteQueryOptions.md#parameters-summary) · [Returns](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/infiniteQueryOptions.md#returns-summary)
+
+<a id="call-signature-1"></a>
+
 ## Call Signature
 
 ```ts
-function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>;
 ```
 
 Defined in: [packages/react-query/src/infiniteQueryOptions.ts:165](https://github.com/TanStack/query/blob/main/packages/react-query/src/infiniteQueryOptions.ts#L165)
@@ -15493,6 +15557,8 @@ The [DefinedInitialDataInfiniteOptions](https://github.com/TanStack/query/blob/m
 
 ### Returns
 
+[`DefinedInitialDataInfiniteOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/DefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\> & [`QueryKeyWithDataTag`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`\>, `TError`\>
+
 The same options object, typed so that `queryKey` carries the inferred data type.
 
 ### Remarks
@@ -15533,10 +15599,12 @@ function Projects() {
 }
 ```
 
+<a id="call-signature-2"></a>
+
 ## Call Signature
 
 ```ts
-function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UnusedSkipTokenInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): OmitKeyof<UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UnusedSkipTokenInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): UnusedSkipTokenInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>;
 ```
 
 Defined in: [packages/react-query/src/infiniteQueryOptions.ts:224](https://github.com/TanStack/query/blob/main/packages/react-query/src/infiniteQueryOptions.ts#L224)
@@ -15577,6 +15645,8 @@ The [UnusedSkipTokenInfiniteOptions](https://github.com/TanStack/query/blob/main
 
 ### Returns
 
+[`UnusedSkipTokenInfiniteOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/UnusedSkipTokenInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\> & [`QueryKeyWithDataTag`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`\>, `TError`\>
+
 The same options object, typed so that `queryKey` carries the inferred data type.
 
 ### Remarks
@@ -15616,10 +15686,12 @@ function Comments({ postId }: { postId: string }) {
 }
 ```
 
+<a id="call-signature-3"></a>
+
 ## Call Signature
 
 ```ts
-function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData, unknown>, TError>;
+function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>;
 ```
 
 Defined in: [packages/react-query/src/infiniteQueryOptions.ts:283](https://github.com/TanStack/query/blob/main/packages/react-query/src/infiniteQueryOptions.ts#L283)
@@ -15660,6 +15732,8 @@ The [UndefinedInitialDataInfiniteOptions](https://github.com/TanStack/query/blob
 
 ### Returns
 
+[`UndefinedInitialDataInfiniteOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/UndefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\> & [`QueryKeyWithDataTag`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`\>, `TError`\>
+
 The same options object, typed so that `queryKey` carries the inferred data type.
 
 ### Remarks
@@ -15698,6 +15772,36 @@ function Comments({ postId }: { postId: string }) {
   )
 }
 ```
+
+<a id="parameters-summary"></a>
+
+## Parameters
+
+### options
+
+[`UndefinedInitialDataInfiniteOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/UndefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
+
+The [UndefinedInitialDataInfiniteOptions](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/UndefinedInitialDataInfiniteOptions.md) to use — everything you can pass to `useInfiniteQuery`.
+
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`UseInfiniteQueryOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/UseInfiniteQueryOptions.md#properties). See the type above for what it changes.
+
+<a id="returns-summary"></a>
+
+## Returns
+
+[`UndefinedInitialDataInfiniteOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/UndefinedInitialDataInfiniteOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\> & [`QueryKeyWithDataTag`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`\>, `TError`\>
+
+The same options object, typed so that `queryKey` carries the inferred data type.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`UseInfiniteQueryOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/UseInfiniteQueryOptions.md#properties), [`QueryKeyWithDataTag`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/QueryKeyWithDataTag.md#properties). See the type above for what it changes.
 
 ### docs/framework/react/reference/functions/isCancelledError.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/isCancelledError.md
@@ -15810,6 +15914,17 @@ If a `mutationKey` filter is provided but the mutation has no `mutationKey` of i
 
 The filters to check the mutation against.
 
+<a id="filters-properties"></a>
+
+#### `filters` properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="filters-property-exact"></a> `exact?` | `boolean` | Match mutation key exactly |
+| <a id="filters-property-mutationkey"></a> `mutationKey?` | readonly `unknown`[] | Include mutations matching this mutation key |
+| <a id="filters-property-predicate"></a> `predicate?` | (`mutation`: [`Mutation`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Mutation.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>) => `boolean` | Include mutations matching this predicate function |
+| <a id="filters-property-status"></a> `status?` | `"error"` \| `"pending"` \| `"success"` \| `"idle"` | Filter by mutation status |
+
 ### mutation
 
 [`Mutation`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Mutation.md)\<`any`, `any`\>
@@ -15858,6 +15973,19 @@ Every filter that is specified must match; filters that are left unspecified are
 
 The filters to check the query against.
 
+<a id="filters-properties"></a>
+
+#### `filters` properties
+
+| Property | Type | Default value | Description |
+| ------ | ------ | ------ | ------ |
+| <a id="filters-property-exact"></a> `exact?` | `boolean` | `undefined` | Match query key exactly |
+| <a id="filters-property-fetchstatus"></a> `fetchStatus?` | `"fetching"` \| `"paused"` \| `"idle"` | `undefined` | Include queries matching their fetchStatus |
+| <a id="filters-property-predicate"></a> `predicate?` | (`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)) => `boolean` | `undefined` | Include queries matching this predicate function |
+| <a id="filters-property-querykey"></a> `queryKey?` | `TQueryKey` \| `TuplePrefixes`\<`TQueryKey`\> | `undefined` | Include queries matching this query key |
+| <a id="filters-property-stale"></a> `stale?` | `boolean` | `undefined` | Include or exclude stale queries |
+| <a id="filters-property-type"></a> `type?` | `QueryTypeFilter` | `'all'` | Filter to active queries, inactive queries or all queries |
+
 ### query
 
 [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`any`, `any`, `any`, `any`\>
@@ -15890,6 +16018,20 @@ title: mutationOptions
 redirect_from:
   - framework/react/reference/mutationOptions
 ---
+
+## Overview
+
+```ts
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: WithRequired<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): WithRequired<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+function mutationOptions<TData, TError, TVariables, TOnMutateResult>(options: Omit<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">): Omit<UseMutationOptions<TData, TError, TVariables, TOnMutateResult>, "mutationKey">;
+```
+
+- [`WithRequired<UseMutationOptions>` → `WithRequired<UseMutationOptions>`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/mutationOptions.md#call-signature-1): You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. A `mutationKey` is required on this overload so the mutation can be looked up later, e.g. with `useMutationState`.
+- [`Omit<UseMutationOptions>` → `Omit<UseMutationOptions>`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/mutationOptions.md#call-signature-2): You can generally pass everything to `mutationOptions` that you can also pass to `useMutation`. No `mutationKey` is required on this overload — use this when you don't need to target the mutation via a `mutationKey` filter later (e.g. with `useMutationState`); it can still be observed through other filters, such as `status`.
+
+See also: [Parameters](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/mutationOptions.md#parameters-summary) · [Returns](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/mutationOptions.md#returns-summary)
+
+<a id="call-signature-1"></a>
 
 ## Call Signature
 
@@ -15960,6 +16102,8 @@ function SavingIndicator() {
 }
 ```
 
+<a id="call-signature-2"></a>
+
 ## Call Signature
 
 ```ts
@@ -16029,6 +16173,37 @@ function CreatePost() {
 }
 ```
 
+<a id="parameters-summary"></a>
+
+## Parameters
+
+### options
+
+`Omit`\<[`UseMutationOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/UseMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
+
+The mutation options to use, identical to what you'd pass to `useMutation`, without a
+`mutationKey`.
+
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`UseMutationOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/UseMutationOptions.md#properties). See the type above for what it changes.
+
+<a id="returns-summary"></a>
+
+## Returns
+
+`Omit`\<[`UseMutationOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/UseMutationOptions.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>, `"mutationKey"`\>
+
+The same options object, unchanged.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`UseMutationOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/UseMutationOptions.md#properties). See the type above for what it changes.
+
 ### docs/framework/react/reference/functions/noop.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/noop.md
 RAW_URL: https://raw.githubusercontent.com/TanStack/query/main/docs/framework/react/reference/functions/noop.md
@@ -16037,6 +16212,20 @@ RAW_URL: https://raw.githubusercontent.com/TanStack/query/main/docs/framework/re
 id: noop
 title: noop
 ---
+
+## Overview
+
+```ts
+function noop(): void;
+function noop(): undefined;
+```
+
+- [`void`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/noop.md#call-signature-1): A function that does nothing.
+- [`undefined`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/noop.md#call-signature-2): A function that does nothing.
+
+See also: [Returns](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/noop.md#returns-summary)
+
+<a id="call-signature-1"></a>
 
 ## Call Signature
 
@@ -16052,6 +16241,8 @@ A function that does nothing.
 
 `void`
 
+<a id="call-signature-2"></a>
+
 ## Call Signature
 
 ```ts
@@ -16063,6 +16254,12 @@ Defined in: [packages/query-core/src/utils.ts:122](https://github.com/TanStack/q
 A function that does nothing.
 
 ### Returns
+
+`undefined`
+
+<a id="returns-summary"></a>
+
+## Returns
 
 `undefined`
 
@@ -16134,6 +16331,15 @@ comes back online).
 
 The `client` to provide, and the `children` that get access to it.
 
+<a id="props-properties"></a>
+
+#### `props` properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="props-property-children"></a> `children?` | `React.ReactNode` | The components that get access to the provided `QueryClient`. |
+| <a id="props-property-client"></a> `client` | [`QueryClient`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryClient.md) | **Required** The `QueryClient` instance to provide. |
+
 ## Returns
 
 `Element`
@@ -16181,6 +16387,14 @@ reset any query errors within the boundaries of the component.
 
 The `children` to render.
 
+<a id="props-properties"></a>
+
+#### `props` properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="props-property-children"></a> `children` | \| `ReactNode` \| [`QueryErrorResetBoundaryFunction`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/QueryErrorResetBoundaryFunction.md) | Either a plain node, or a function that receives the boundary's QueryErrorResetBoundaryValue and returns a node. |
+
 ## Returns
 
 `Element`
@@ -16226,10 +16440,26 @@ redirect_from:
   - framework/react/reference/queryOptions
 ---
 
+## Overview
+
+```ts
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>): UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+```
+
+- [`DefinedInitialDataOptions` → `DefinedInitialDataOptions & QueryKeyWithDataTag`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/queryOptions.md#call-signature-1): You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and is the query key to generate options for.
+- [`UnusedSkipTokenOptions` → `UnusedSkipTokenOptions & QueryKeyWithDataTag`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/queryOptions.md#call-signature-2): You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and is the query key to generate options for.
+- [`UndefinedInitialDataOptions` → `UndefinedInitialDataOptions & QueryKeyWithDataTag`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/queryOptions.md#call-signature-3): You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and is the query key to generate options for.
+
+See also: [Parameters](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/queryOptions.md#parameters-summary) · [Returns](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/queryOptions.md#returns-summary)
+
+<a id="call-signature-1"></a>
+
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
 Defined in: [packages/react-query/src/queryOptions.ts:137](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L137)
@@ -16269,6 +16499,8 @@ The [DefinedInitialDataOptions](https://github.com/TanStack/query/blob/main/docs
 
 ### Returns
 
+[`DefinedInitialDataOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/DefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & [`QueryKeyWithDataTag`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\>
+
 The same options object, typed so that `queryKey` carries the inferred data type.
 
 ### See
@@ -16303,10 +16535,12 @@ function Posts() {
 }
 ```
 
+<a id="call-signature-2"></a>
+
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>): OmitKeyof<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryFn"> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>): UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
 Defined in: [packages/react-query/src/queryOptions.ts:176](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L176)
@@ -16343,6 +16577,8 @@ The [UnusedSkipTokenOptions](https://github.com/TanStack/query/blob/main/docs/fr
 
 ### Returns
 
+[`UnusedSkipTokenOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/UnusedSkipTokenOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & [`QueryKeyWithDataTag`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\>
+
 The same options object, typed so that `queryKey` carries the inferred data type.
 
 ### See
@@ -16372,10 +16608,12 @@ function Post({ id }: { id: string }) {
 }
 ```
 
+<a id="call-signature-3"></a>
+
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & object & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
 Defined in: [packages/react-query/src/queryOptions.ts:237](https://github.com/TanStack/query/blob/main/packages/react-query/src/queryOptions.ts#L237)
@@ -16411,6 +16649,8 @@ is the query key to generate options for.
 The [UndefinedInitialDataOptions](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/UndefinedInitialDataOptions.md) to use — everything you can pass to `useQuery`.
 
 ### Returns
+
+[`UndefinedInitialDataOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & [`QueryKeyWithDataTag`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\>
 
 The same options object, typed so that `queryKey` carries the inferred data type.
 
@@ -16465,6 +16705,36 @@ function Post({ postId }: { postId: number | undefined }) {
   return <h1>{data?.title}</h1>
 }
 ```
+
+<a id="parameters-summary"></a>
+
+## Parameters
+
+### options
+
+[`UndefinedInitialDataOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+
+The [UndefinedInitialDataOptions](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/UndefinedInitialDataOptions.md) to use — everything you can pass to `useQuery`.
+
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`UseQueryOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/UseQueryOptions.md#properties). See the type above for what it changes.
+
+<a id="returns-summary"></a>
+
+## Returns
+
+[`UndefinedInitialDataOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/UndefinedInitialDataOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & [`QueryKeyWithDataTag`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/QueryKeyWithDataTag.md)\<`TQueryKey`, `TQueryFnData`, `TError`\>
+
+The same options object, typed so that `queryKey` carries the inferred data type.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`UseQueryOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/UseQueryOptions.md#properties), [`QueryKeyWithDataTag`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/QueryKeyWithDataTag.md#properties). See the type above for what it changes.
 
 ### docs/framework/react/reference/functions/replaceEqualDeep.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/replaceEqualDeep.md
@@ -16589,6 +16859,22 @@ redirect_from:
   - framework/react/reference/useInfiniteQuery
 ---
 
+## Overview
+
+```ts
+function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, queryClient?: QueryClient): DefinedUseInfiniteQueryResult<TData, TError>;
+function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, queryClient?: QueryClient): UseInfiniteQueryResult<TData, TError>;
+function useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options: UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, queryClient?: QueryClient): UseInfiniteQueryResult<TData, TError>;
+```
+
+- [`DefinedInitialDataInfiniteOptions` → `DefinedUseInfiniteQueryResult`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/useInfiniteQuery.md#call-signature-1): The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
+- [`UndefinedInitialDataInfiniteOptions` → `UseInfiniteQueryResult`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/useInfiniteQuery.md#call-signature-2): The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
+- [`UseInfiniteQueryOptions` → `UseInfiniteQueryResult`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/useInfiniteQuery.md#call-signature-3): The options for `useInfiniteQuery` are identical to `useQuery`, with the addition of `initialPageParam`, `getNextPageParam`, `getPreviousPageParam`, and `maxPages`.
+
+See also: [Parameters](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/useInfiniteQuery.md#parameters-summary) · [Returns](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/useInfiniteQuery.md#returns-summary)
+
+<a id="call-signature-1"></a>
+
 ## Call Signature
 
 ```ts
@@ -16684,6 +16970,8 @@ function Projects() {
   )
 }
 ```
+
+<a id="call-signature-2"></a>
 
 ## Call Signature
 
@@ -16844,6 +17132,8 @@ function Projects() {
   )
 }
 ```
+
+<a id="call-signature-3"></a>
 
 ## Call Signature
 
@@ -17034,6 +17324,111 @@ function Comments({ postId }: { postId: string | undefined }) {
 }
 ```
 
+<a id="parameters-summary"></a>
+
+## Parameters
+
+### options
+
+[`UseInfiniteQueryOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/UseInfiniteQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`, `TPageParam`\>
+
+The [UseInfiniteQueryOptions](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/UseInfiniteQueryOptions.md) to use — everything you can pass to `useInfiniteQuery`.
+
+<a id="options-properties"></a>
+
+#### `options` properties
+
+| Property | Type | Default value | Description |
+| ------ | ------ | ------ | ------ |
+| <a id="options-property-enabled"></a> `enabled?` | \| `false` \| `true` \| ((`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\>, `TQueryKey`\>) => `boolean`) | `true` | Set this to `false` or a function that returns `false` to disable automatic refetching when the query mounts or changes query keys. To refetch the query, use the `refetch` method returned from the `useQuery` instance. Accepts a boolean or function that returns a boolean. |
+| <a id="options-property-gctime"></a> `gcTime?` | `number` | `undefined` | The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration. When different garbage collection times are specified, the longest one will be used. Setting it to `Infinity` will disable garbage collection. Defaults to `5 * 60 * 1000` (5 minutes), or `Infinity` during SSR. Note: the maximum allowed time is about 24 days, imposed by `setTimeout`'s 32-bit signed integer delay — see `timeoutManager.setTimeoutProvider` for a workaround. |
+| <a id="options-property-getnextpageparam"></a> `getNextPageParam` | (`lastPage`: `TQueryFnData`, `allPages`: `TQueryFnData`[], `lastPageParam`: `TPageParam`, `allPageParams`: `TPageParam`[]) => `TPageParam` \| `null` \| `undefined` | `undefined` | This function can be set to automatically get the next cursor for infinite queries. The result will also be used to determine the value of `hasNextPage`. |
+| <a id="options-property-getpreviouspageparam"></a> `getPreviousPageParam?` | (`firstPage`: `TQueryFnData`, `allPages`: `TQueryFnData`[], `firstPageParam`: `TPageParam`, `allPageParams`: `TPageParam`[]) => `TPageParam` \| `null` \| `undefined` | `undefined` | This function can be set to automatically get the previous cursor for infinite queries. The result will also be used to determine the value of `hasPreviousPage`. |
+| <a id="options-property-initialdata"></a> `initialData?` | \| [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\> \| (() => \| [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\> \| `undefined`) | `undefined` | If set, this value will be used as the initial data for the query cache (as long as the query hasn't been created or cached yet). If set to a function, the function will be called **once** during the shared/root query initialization, and be expected to synchronously return the initial data. Initial data is considered stale by default unless a `staleTime` has been set. `initialData` **is persisted** to the cache. |
+| <a id="options-property-initialdataupdatedat"></a> `initialDataUpdatedAt?` | `number` \| (() => `number` \| `undefined`) | `undefined` | If set, this value will be used as the time (in milliseconds) of when the `initialData` itself was last updated. |
+| <a id="options-property-initialpageparam"></a> `initialPageParam` | `TPageParam` | `undefined` | The page param to start from when an infinite query has no pages yet. It is passed to `queryFn` as `pageParam` for the first page; every page after that gets the value returned by `getNextPageParam` or `getPreviousPageParam`. It only applies while the query has no pages: once a first page exists, refetching starts from that page's own param instead. |
+| <a id="options-property-maxpages"></a> `maxPages?` | `number` | `undefined` | Maximum number of pages to store in the data of an infinite query. |
+| <a id="options-property-meta"></a> `meta?` | `Record`\<`string`, `unknown`\> | `undefined` | Additional payload to be stored on each query. Use this property to pass information that can be used in other places. |
+| <a id="options-property-networkmode"></a> `networkMode?` | `"online"` \| `"always"` \| `"offlineFirst"` | `'online'` | Controls whether a query is allowed to run based on the current network connectivity. **See** [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information. |
+| <a id="options-property-notifyonchangeprops"></a> `notifyOnChangeProps?` | \| ( \| `"error"` \| `"data"` \| `"isError"` \| `"isPending"` \| `"isLoading"` \| `"isLoadingError"` \| `"isRefetchError"` \| `"isSuccess"` \| `"isPlaceholderData"` \| `"status"` \| `"dataUpdatedAt"` \| `"errorUpdatedAt"` \| `"failureCount"` \| `"failureReason"` \| `"errorUpdateCount"` \| `"isFetched"` \| `"isFetchedAfterMount"` \| `"isFetching"` \| `"isInitialLoading"` \| `"isPaused"` \| `"isRefetching"` \| `"isStale"` \| `"isEnabled"` \| `"refetch"` \| `"fetchStatus"` \| `"fetchNextPage"` \| `"fetchPreviousPage"` \| `"hasNextPage"` \| `"hasPreviousPage"` \| `"isFetchNextPageError"` \| `"isFetchingNextPage"` \| `"isFetchPreviousPageError"` \| `"isFetchingPreviousPage"`)[] \| `"all"` \| (() => \| `"all"` \| ( \| `"error"` \| `"data"` \| `"isError"` \| `"isPending"` \| `"isLoading"` \| `"isLoadingError"` \| `"isRefetchError"` \| `"isSuccess"` \| `"isPlaceholderData"` \| `"status"` \| `"dataUpdatedAt"` \| `"errorUpdatedAt"` \| `"failureCount"` \| `"failureReason"` \| `"errorUpdateCount"` \| `"isFetched"` \| `"isFetchedAfterMount"` \| `"isFetching"` \| `"isInitialLoading"` \| `"isPaused"` \| `"isRefetching"` \| `"isStale"` \| `"isEnabled"` \| `"refetch"` \| `"fetchStatus"` \| `"fetchNextPage"` \| `"fetchPreviousPage"` \| `"hasNextPage"` \| `"hasPreviousPage"` \| `"isFetchNextPageError"` \| `"isFetchingNextPage"` \| `"isFetchPreviousPageError"` \| `"isFetchingPreviousPage"`)[] \| `undefined`) | `undefined` | If set, the component will only re-render if any of the listed properties change. When set to `['data', 'error']`, the component will only re-render when the `data` or `error` properties change. When set to `'all'`, the component will re-render whenever a query is updated. When set to a function, the function will be executed to compute the list of properties. Defaults to `undefined`, in which case property access is tracked automatically, and the component only re-renders when one of the tracked properties changes. |
+| <a id="options-property-persister"></a> `persister?` | (`queryFn`: (`context`: [`QueryFunctionContext`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/QueryFunctionContext.md)\<`NoInfer`\<`TQueryKey`\>, `TPageParam`\>) => `TQueryFnData` \| `Promise`\<`TQueryFnData`\>, `context`: `object`, `query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)) => `TQueryFnData` \| `Promise`\<`TQueryFnData`\> | `undefined` | This option can be used to persist the result of a query to an external storage, bypassing the need to actually call the `queryFn`. Useful for persisting a query's data across e.g. server/client boundaries. |
+| <a id="options-property-placeholderdata"></a> `placeholderData?` | \| [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\> \| ((`previousData`: \| [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\> \| `undefined`, `previousQuery`: \| [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<[`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\>, `TError`, [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\>, `TQueryKey`\> \| `undefined`) => \| [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\> \| `undefined`) | `undefined` | If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `loading` data and no initialData has been provided. |
+| <a id="options-property-queryfn"></a> `queryFn?` | \| *typeof* [`skipToken`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/variables/skipToken.md) \| ((`context`: [`QueryFunctionContext`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/QueryFunctionContext.md)\<`TQueryKey`, `TPageParam`\>) => `TQueryFnData` \| `Promise`\<`TQueryFnData`\>) | `undefined` | The function that the query will use to request data. Required, unless a default query function has been set via `queryClient.setQueryDefaults` or `queryClient.setDefaultOptions`. Receives a [QueryFunctionContext](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/QueryFunctionContext.md). Must return a promise that will either resolve data or throw an error. The data cannot be `undefined`. |
+| <a id="options-property-queryhash"></a> `queryHash?` | `string` | `undefined` | The hashed form of `queryKey`, computed with `queryKeyHashFn` (or the default hashing function otherwise). Used as the actual cache key internally. |
+| <a id="options-property-querykey"></a> `queryKey` | `TQueryKey` & `object` | `undefined` | The query key to use for this query. The query key will be hashed into a stable hash. See [Query Keys](https://tanstack.com/query/latest/docs/framework/react/guides/query-keys) for more information. The query will automatically update when this key changes (as long as `enabled` is not set to `false`). |
+| <a id="options-property-querykeyhashfn"></a> `queryKeyHashFn?` | (`queryKey`: `TQueryKey`) => `string` | `undefined` | If specified, this function is used to hash the `queryKey` to a string. |
+| <a id="options-property-refetchinterval"></a> `refetchInterval?` | \| `number` \| `false` \| ((`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\>, `TQueryKey`\>) => `number` \| `false` \| `undefined`) | `false` | If set to a number, the query will continuously refetch at this frequency in milliseconds. If set to a function, the function will be executed with the latest data and query to compute a frequency |
+| <a id="options-property-refetchintervalinbackground"></a> `refetchIntervalInBackground?` | `boolean` | `false` | If set to `true`, the query will continue to refetch while their tab/window is in the background. |
+| <a id="options-property-refetchonmount"></a> `refetchOnMount?` | \| `boolean` \| `"always"` \| ((`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\>, `TQueryKey`\>) => `boolean` \| `"always"`) | `true` | If set to `true`, the query will refetch on mount if the data is stale. If set to `false`, will disable additional instances of a query to trigger background refetch. If set to `'always'`, the query will always refetch on mount (except when `staleTime: 'static'` is used). If set to a function, the function will be executed with the latest data and query to compute the value |
+| <a id="options-property-refetchonreconnect"></a> `refetchOnReconnect?` | \| `boolean` \| `"always"` \| ((`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\>, `TQueryKey`\>) => `boolean` \| `"always"`) | `undefined` | If set to `true`, the query will refetch on reconnect if the data is stale. If set to `false`, the query will not refetch on reconnect. If set to `'always'`, the query will always refetch on reconnect (except when `staleTime: 'static'` is used). If set to a function, the function will be executed with the latest data and query to compute the value. Defaults to `true` unless `networkMode` is `'always'`. |
+| <a id="options-property-refetchonwindowfocus"></a> `refetchOnWindowFocus?` | \| `boolean` \| `"always"` \| ((`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\>, `TQueryKey`\>) => `boolean` \| `"always"`) | `true` | If set to `true`, the query will refetch on window focus if the data is stale. If set to `false`, the query will not refetch on window focus. If set to `'always'`, the query will always refetch on window focus (except when `staleTime: 'static'` is used). If set to a function, the function will be executed with the latest data and query to compute the value. |
+| <a id="options-property-retry"></a> `retry?` | \| `number` \| `false` \| `true` \| ((`failureCount`: `number`, `error`: `TError`) => `boolean`) | `undefined` | If `false`, failed queries will not retry by default. If `true`, failed queries will retry infinitely. If set to an integer number, e.g. 3, failed queries will retry until the failed query count meets that number. If set to a function `(failureCount, error) => boolean` failed queries will retry until the function returns false. Defaults to `3` on the client and `0` on the server. |
+| <a id="options-property-retrydelay"></a> `retryDelay?` | `number` \| ((`failureCount`: `number`, `error`: `TError`) => `number`) | `undefined` | This function receives a `retryAttempt` integer and the actual Error and returns the delay to apply before the next attempt in milliseconds. A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff. A function like `attempt => attempt * 1000` applies linear backoff. Defaults to a function that applies exponential backoff, capped at 30 seconds. |
+| <a id="options-property-retryonmount"></a> `retryOnMount?` | \| `false` \| `true` \| ((`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\>, `TQueryKey`\>) => `boolean`) | `true` | If set to `false`, the query will not be retried on mount if it contains an error. If set to a function, the function will be executed with the query to compute the value. |
+| <a id="options-property-select"></a> `select?` | (`data`: [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)) => `TData` | `undefined` | This option can be used to transform or select a part of the data returned by the query function. It affects the returned `data` value, but does not affect what gets stored in the query cache. The `select` function will only run if `data` changed, or if the reference to the `select` function itself changes. To optimize, memoize the function so its reference stays stable across calls. |
+| <a id="options-property-staletime"></a> `staleTime?` | \| `number` \| `"static"` \| ((`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\>, `TQueryKey`\>) => `number` \| `"static"`) | `0` | The time in milliseconds after data is considered stale. If set to `Infinity`, the data will never be considered stale. If set to `'static'`, the data will never be considered stale. If set to a function, the function will be executed with the query to compute a `staleTime`. |
+| <a id="options-property-structuralsharing"></a> `structuralSharing?` | `boolean` \| ((`oldData`: `unknown`, `newData`: `unknown`) => `unknown`) | `true` | Set this to `false` to disable structural sharing between query results. Set this to a function which accepts the old and new data and returns resolved data of the same type to implement custom structural sharing logic. |
+| <a id="options-property-subscribed"></a> `subscribed?` | `boolean` | `true` | Set this to `false` to unsubscribe this observer from updates to the query cache. |
+| <a id="options-property-throwonerror"></a> `throwOnError?` | \| `false` \| `true` \| ((`error`: `TError`, `query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\>, `TQueryKey`\>) => `boolean`) | `false` | Whether errors should be thrown instead of setting the `error` property. If set to `true` or `suspense` is `true`, all errors will be thrown to the error boundary. If set to `false` and `suspense` is `false`, errors are returned as state. If set to a function, it will be passed the error and the query, and it should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`). |
+
+### queryClient?
+
+[`QueryClient`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryClient.md)
+
+Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
+be used.
+
+<a id="returns-summary"></a>
+
+## Returns
+
+[`UseInfiniteQueryResult`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/UseInfiniteQueryResult.md)\<`TData`, `TError`\>
+
+The same properties as `useQuery`, with the addition of `fetchNextPage`, `fetchPreviousPage`,
+`hasNextPage`, `hasPreviousPage`, `isFetchingNextPage`, and `isFetchingPreviousPage`. `data.pages` and
+`data.pageParams` are also added, as long as a `select` doesn't change `TData` away from its default
+`InfiniteData<TQueryFnData>` shape.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="result-property-data"></a> `data` | `TData` \| `undefined` | The last successfully resolved data for the query. |
+| <a id="result-property-dataupdatedat"></a> `dataUpdatedAt` | `number` | The timestamp for when the query most recently returned the `status` as `"success"`. |
+| <a id="result-property-error"></a> `error` | `TError` \| `null` | The error object for the query, if an error was thrown. - Defaults to `null`. |
+| <a id="result-property-errorupdatecount"></a> `errorUpdateCount` | `number` | The sum of all errors. |
+| <a id="result-property-errorupdatedat"></a> `errorUpdatedAt` | `number` | The timestamp for when the query most recently returned the `status` as `"error"`. |
+| <a id="result-property-failurecount"></a> `failureCount` | `number` | The failure count for the query. - Incremented every time the query fails. - Reset to `0` when the query succeeds. |
+| <a id="result-property-failurereason"></a> `failureReason` | `TError` \| `null` | The failure reason for the query retry. - Reset to `null` when the query succeeds. |
+| <a id="result-property-fetchnextpage"></a> `fetchNextPage` | (`options?`: [`FetchNextPageOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/FetchNextPageOptions.md)) => `Promise`\<[`InfiniteQueryObserverResult`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/InfiniteQueryObserverResult.md)\<`TData`, `TError`\>\> | This function allows you to fetch the next "page" of results. |
+| <a id="result-property-fetchpreviouspage"></a> `fetchPreviousPage` | (`options?`: [`FetchPreviousPageOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/FetchPreviousPageOptions.md)) => `Promise`\<[`InfiniteQueryObserverResult`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/InfiniteQueryObserverResult.md)\<`TData`, `TError`\>\> | This function allows you to fetch the previous "page" of results. |
+| <a id="result-property-fetchstatus"></a> `fetchStatus` | `"fetching"` \| `"paused"` \| `"idle"` | The fetch status of the query. - `fetching`: Is `true` whenever the queryFn is executing, which includes initial `pending` as well as background refetch. - `paused`: The query wanted to fetch, but has been `paused`. - `idle`: The query is not fetching. - See [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information. |
+| <a id="result-property-hasnextpage"></a> `hasNextPage` | `boolean` | Will be `true` if there is a next page to be fetched (known via the `getNextPageParam` option). |
+| <a id="result-property-haspreviouspage"></a> `hasPreviousPage` | `boolean` | Will be `true` if there is a previous page to be fetched (known via the `getPreviousPageParam` option). |
+| <a id="result-property-isenabled"></a> `isEnabled` | `boolean` | `true` if this observer is enabled, `false` otherwise. |
+| <a id="result-property-iserror"></a> `isError` | `boolean` | A derived boolean from the `status` variable, provided for convenience. - `true` if the query attempt resulted in an error. |
+| <a id="result-property-isfetched"></a> `isFetched` | `boolean` | Will be `true` if the query has been fetched. |
+| <a id="result-property-isfetchedaftermount"></a> `isFetchedAfterMount` | `boolean` | Will be `true` if the query has been fetched after the component mounted. - This property can be used to not show any previously cached data. |
+| <a id="result-property-isfetching"></a> `isFetching` | `boolean` | A derived boolean from the `fetchStatus` variable, provided for convenience. - `true` whenever the `queryFn` is executing, which includes initial `pending` as well as background refetch. |
+| <a id="result-property-isfetchingnextpage"></a> `isFetchingNextPage` | `boolean` | Will be `true` while fetching the next page with `fetchNextPage`. |
+| <a id="result-property-isfetchingpreviouspage"></a> `isFetchingPreviousPage` | `boolean` | Will be `true` while fetching the previous page with `fetchPreviousPage`. |
+| <a id="result-property-isfetchnextpageerror"></a> `isFetchNextPageError` | `boolean` | Will be `true` if the query failed while fetching the next page. |
+| <a id="result-property-isfetchpreviouspageerror"></a> `isFetchPreviousPageError` | `boolean` | Will be `true` if the query failed while fetching the previous page. |
+| <a id="result-property-isinitialloading"></a> ~~`isInitialLoading`~~ | `boolean` | **Deprecated** `isInitialLoading` is being deprecated in favor of `isLoading` and will be removed in the next major version. |
+| <a id="result-property-isloading"></a> `isLoading` | `boolean` | Is `true` whenever the first fetch for a query is in-flight. - Is the same as `isFetching && isPending`. |
+| <a id="result-property-isloadingerror"></a> `isLoadingError` | `boolean` | Will be `true` if the query failed while fetching for the first time. |
+| <a id="result-property-ispaused"></a> `isPaused` | `boolean` | A derived boolean from the `fetchStatus` variable, provided for convenience. - The query wanted to fetch, but has been `paused`. |
+| <a id="result-property-ispending"></a> `isPending` | `boolean` | Will be `pending` if there's no cached data and no query attempt was finished yet. |
+| <a id="result-property-isplaceholderdata"></a> `isPlaceholderData` | `boolean` | Will be `true` if the data shown is the placeholder data. |
+| <a id="result-property-isrefetcherror"></a> `isRefetchError` | `boolean` | Will be `true` if the query failed while refetching. |
+| <a id="result-property-isrefetching"></a> `isRefetching` | `boolean` | Is `true` whenever a background refetch is in-flight, which _does not_ include initial `pending`. - Is the same as `isFetching && !isPending`. |
+| <a id="result-property-isstale"></a> `isStale` | `boolean` | Will be `true` if the data in the cache is invalidated or if the data is older than the given `staleTime`. |
+| <a id="result-property-issuccess"></a> `isSuccess` | `boolean` | A derived boolean from the `status` variable, provided for convenience. - `true` if the query has received a response with no errors and is ready to display its data. |
+| <a id="result-property-refetch"></a> `refetch` | (`options?`: [`RefetchOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/RefetchOptions.md)) => `Promise`\<[`QueryObserverResult`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/QueryObserverResult.md)\<`TData`, `TError`\>\> | A function to manually refetch the query. |
+| <a id="result-property-status"></a> `status` | `"error"` \| `"pending"` \| `"success"` | The status of the query. - Will be: - `pending` if there's no cached data and no query attempt was finished yet. - `error` if the query attempt resulted in an error. - `success` if the query has received a response with no errors and is ready to display its data. |
+
 ### docs/framework/react/reference/functions/useIsFetching.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/useIsFetching.md
 RAW_URL: https://raw.githubusercontent.com/TanStack/query/main/docs/framework/react/reference/functions/useIsFetching.md
@@ -17061,6 +17456,19 @@ the background (useful for app-wide loading indicators).
 [`QueryFilters`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/QueryFilters.md)\<readonly `unknown`[]\>
 
 The [QueryFilters](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/QueryFilters.md) to narrow down the matched queries.
+
+<a id="filters-properties"></a>
+
+#### `filters` properties
+
+| Property | Type | Default value | Description |
+| ------ | ------ | ------ | ------ |
+| <a id="filters-property-exact"></a> `exact?` | `boolean` | `undefined` | Match query key exactly |
+| <a id="filters-property-fetchstatus"></a> `fetchStatus?` | `"fetching"` \| `"paused"` \| `"idle"` | `undefined` | Include queries matching their fetchStatus |
+| <a id="filters-property-predicate"></a> `predicate?` | (`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)) => `boolean` | `undefined` | Include queries matching this predicate function |
+| <a id="filters-property-querykey"></a> `queryKey?` | `TQueryKey` \| `TuplePrefixes`\<`TQueryKey`\> | `undefined` | Include queries matching this query key |
+| <a id="filters-property-stale"></a> `stale?` | `boolean` | `undefined` | Include or exclude stale queries |
+| <a id="filters-property-type"></a> `type?` | `QueryTypeFilter` | `'all'` | Filter to active queries, inactive queries or all queries |
 
 ### queryClient?
 
@@ -17129,6 +17537,17 @@ The `useIsMutating` hook returns the `number` of mutations that your application
 [`MutationFilters`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/MutationFilters.md)\<`unknown`, `Error`, `unknown`, `unknown`\>
 
 The [MutationFilters](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/MutationFilters.md) to narrow down the matched mutations.
+
+<a id="filters-properties"></a>
+
+#### `filters` properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="filters-property-exact"></a> `exact?` | `boolean` | Match mutation key exactly |
+| <a id="filters-property-mutationkey"></a> `mutationKey?` | readonly `unknown`[] | Include mutations matching this mutation key |
+| <a id="filters-property-predicate"></a> `predicate?` | (`mutation`: [`Mutation`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Mutation.md)\<`TData`, `TError`, `TVariables`, `TOnMutateResult`\>) => `boolean` | Include mutations matching this predicate function |
+| <a id="filters-property-status"></a> `status?` | `"error"` \| `"pending"` \| `"success"` \| `"idle"` | Filter by mutation status |
 
 ### queryClient?
 
@@ -17227,6 +17646,26 @@ Unlike queries, mutations are typically used to create/update/delete data or per
 
 The [UseMutationOptions](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/UseMutationOptions.md) to use — everything you can pass to `useMutation`.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+| Property | Type | Default value | Description |
+| ------ | ------ | ------ | ------ |
+| <a id="options-property-gctime"></a> `gcTime?` | `number` | `undefined` | The time in milliseconds that an unused/inactive mutation remains in memory before it is garbage collected. Defaults to `5 * 60 * 1000` (5 minutes), or `Infinity` during SSR. |
+| <a id="options-property-meta"></a> `meta?` | `Record`\<`string`, `unknown`\> | `undefined` | Additional payload to be stored on the mutation cache entry. Use it to pass information that can be read wherever the `mutation` is available, such as the `onError` and `onSuccess` callbacks of the `MutationCache`. |
+| <a id="options-property-mutationfn"></a> `mutationFn?` | (`variables`: `TVariables`, `context`: [`MutationFunctionContext`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/MutationFunctionContext.md)) => `Promise`\<`TData`\> | `undefined` | The function that performs the asynchronous task this mutation runs. Required, unless a default mutation function has been set for the matching `mutationKey` via `queryClient.setMutationDefaults`. Receives the `variables` passed to `mutate`, and a [MutationFunctionContext](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/MutationFunctionContext.md) holding the `QueryClient`, the `mutationKey` and `meta`. Must return a promise that resolves the mutation's data. |
+| <a id="options-property-mutationkey"></a> `mutationKey?` | readonly `unknown`[] | `undefined` | The key to use for this mutation. Optional, but required to inherit defaults registered with `queryClient.setMutationDefaults`, and to match this mutation with `useMutationState` or `queryClient.isMutating`. |
+| <a id="options-property-networkmode"></a> `networkMode?` | `"online"` \| `"always"` \| `"offlineFirst"` | `'online'` | Controls whether a mutation is allowed to run based on the current network connectivity. **See** [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information. |
+| <a id="options-property-onerror"></a> `onError?` | (`error`: `TError`, `variables`: `TVariables`, `onMutateResult`: `TOnMutateResult` \| `undefined`, `context`: [`MutationFunctionContext`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/MutationFunctionContext.md)) => `unknown` | `undefined` | This function fires when the mutation encounters an error, and is passed the error. If a promise is returned, it is awaited before `onSettled` runs. |
+| <a id="options-property-onmutate"></a> `onMutate?` | (`variables`: `TVariables`, `context`: [`MutationFunctionContext`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/MutationFunctionContext.md)) => `TOnMutateResult` \| `Promise`\<`TOnMutateResult`\> | `undefined` | This function fires before the mutation function runs, and receives the same variables. Useful for optimistic updates applied in the hope that the mutation succeeds. The value it returns is passed to `onSuccess`, `onError` and `onSettled` as `onMutateResult`, which is where an optimistic update is usually rolled back. If a promise is returned, it is awaited before the mutation function runs. |
+| <a id="options-property-onsettled"></a> `onSettled?` | (`data`: `TData` \| `undefined`, `error`: `TError` \| `null`, `variables`: `TVariables`, `onMutateResult`: `TOnMutateResult` \| `undefined`, `context`: [`MutationFunctionContext`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/MutationFunctionContext.md)) => `unknown` | `undefined` | This function fires when the mutation either succeeds or errors, and is passed either the data or the error. If a promise is returned, it is awaited before the mutation settles. |
+| <a id="options-property-onsuccess"></a> `onSuccess?` | (`data`: `TData`, `variables`: `TVariables`, `onMutateResult`: `TOnMutateResult`, `context`: [`MutationFunctionContext`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/MutationFunctionContext.md)) => `unknown` | `undefined` | This function fires when the mutation succeeds, and is passed the mutation's result. If a promise is returned, it is awaited before `onSettled` runs. |
+| <a id="options-property-retry"></a> `retry?` | \| `number` \| `false` \| `true` \| ((`failureCount`: `number`, `error`: `TError`) => `boolean`) | `0` | If `false`, failed mutations will not retry by default. If `true`, failed mutations will retry infinitely. If set to an integer number, e.g. 3, failed mutations will retry until the failed mutation count meets that number. If set to a function `(failureCount, error) => boolean` failed mutations will retry until the function returns false. |
+| <a id="options-property-retrydelay"></a> `retryDelay?` | `number` \| ((`failureCount`: `number`, `error`: `TError`) => `number`) | `undefined` | This function receives a `retryAttempt` integer and the actual Error and returns the delay to apply before the next attempt in milliseconds. Defaults to a function that applies exponential backoff, capped at 30 seconds. |
+| <a id="options-property-scope"></a> `scope?` | [`MutationScope`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/MutationScope.md) | `undefined` | Controls whether this mutation runs alongside others or waits its turn. Mutations sharing the same `scope.id` run serially, in the order they were started. Without a scope, a mutation runs as soon as it is triggered. |
+| <a id="options-property-throwonerror"></a> `throwOnError?` | `boolean` \| ((`error`: `TError`) => `boolean`) | `false` | Whether errors should be thrown instead of setting the `error` property. If set to `true`, all errors will be thrown to the nearest error boundary. If set to a function, it will be passed the error and should return a boolean indicating whether to throw the error (`true`) or return it as state (`false`). |
+
 ### queryClient?
 
 [`QueryClient`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryClient.md)
@@ -17243,6 +17682,12 @@ argument, useful for triggering call-site side effects (e.g. navigation) without
 mutation definition. Hook-level callbacks (passed to `options`) fire for every mutation; per-call callbacks
 fire only for the latest call you've made, and only while the component is still mounted — unmounting before
 the mutation settles removes the subscription and prevents them from firing.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`MutationObserverBaseResult`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/MutationObserverBaseResult.md#properties). See the type above for what it changes.
 
 ## Throws
 
@@ -17675,6 +18120,12 @@ already there or already in flight.
 
 The [UsePrefetchQueryOptions](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/UsePrefetchQueryOptions.md) to use — everything you can pass to `queryClient.query`.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+Built from [`QueryExecuteOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/QueryExecuteOptions.md#properties). See the type above for what it changes.
+
 ### queryClient?
 
 [`QueryClient`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryClient.md)
@@ -17925,6 +18376,22 @@ redirect_from:
   - framework/react/reference/useQuery
 ---
 
+## Overview
+
+```ts
+function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): DefinedUseQueryResult<TData, TError>;
+function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryResult<TData, TError>;
+function useQuery<TQueryFnData, TError, TData, TQueryKey>(options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, queryClient?: QueryClient): UseQueryResult<TData, TError>;
+```
+
+- [`DefinedInitialDataOptions` → `DefinedUseQueryResult`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/useQuery.md#call-signature-1): This overload is selected when `initialData` is set, so the resulting `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
+- [`UndefinedInitialDataOptions` → `UseQueryResult`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/useQuery.md#call-signature-2): This overload is selected when `initialData` is omitted or may be `undefined`, so the resulting `data` can be `undefined`.
+- [`UseQueryOptions` → `UseQueryResult`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/useQuery.md#call-signature-3): Fallback overload for options whose `initialData` presence isn't statically known — for example, an object typed as [UseQueryOptions](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/UseQueryOptions.md) rather than an object literal. Prefer one of the other overloads when possible, since they infer whether `data` can be `undefined` from `initialData` directly.
+
+See also: [Parameters](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/useQuery.md#parameters-summary) · [Returns](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/useQuery.md#returns-summary)
+
+<a id="call-signature-1"></a>
+
 ## Call Signature
 
 ```ts
@@ -18005,6 +18472,8 @@ function Posts() {
   )
 }
 ```
+
+<a id="call-signature-2"></a>
 
 ## Call Signature
 
@@ -18109,6 +18578,8 @@ function Posts() {
   )
 }
 ```
+
+<a id="call-signature-3"></a>
 
 ## Call Signature
 
@@ -18312,6 +18783,99 @@ function Posts() {
 }
 ```
 
+<a id="parameters-summary"></a>
+
+## Parameters
+
+### options
+
+[`UseQueryOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/UseQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>
+
+The [UseQueryOptions](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/UseQueryOptions.md) to use — everything you can pass to `useQuery`.
+
+<a id="options-properties"></a>
+
+#### `options` properties
+
+| Property | Type | Default value | Description |
+| ------ | ------ | ------ | ------ |
+| <a id="options-property-enabled"></a> `enabled?` | \| `false` \| `true` \| ((`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, `TQueryFnData`, `TQueryKey`\>) => `boolean`) | `true` | Set this to `false` or a function that returns `false` to disable automatic refetching when the query mounts or changes query keys. To refetch the query, use the `refetch` method returned from the `useQuery` instance. Accepts a boolean or function that returns a boolean. |
+| <a id="options-property-gctime"></a> `gcTime?` | `number` | `undefined` | The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration. When different garbage collection times are specified, the longest one will be used. Setting it to `Infinity` will disable garbage collection. Defaults to `5 * 60 * 1000` (5 minutes), or `Infinity` during SSR. Note: the maximum allowed time is about 24 days, imposed by `setTimeout`'s 32-bit signed integer delay — see `timeoutManager.setTimeoutProvider` for a workaround. |
+| <a id="options-property-initialdata"></a> `initialData?` | `TQueryFnData` \| (() => `TQueryFnData` \| `undefined`) | `undefined` | If set, this value will be used as the initial data for the query cache (as long as the query hasn't been created or cached yet). If set to a function, the function will be called **once** during the shared/root query initialization, and be expected to synchronously return the initial data. Initial data is considered stale by default unless a `staleTime` has been set. `initialData` **is persisted** to the cache. |
+| <a id="options-property-initialdataupdatedat"></a> `initialDataUpdatedAt?` | `number` \| (() => `number` \| `undefined`) | `undefined` | If set, this value will be used as the time (in milliseconds) of when the `initialData` itself was last updated. |
+| <a id="options-property-maxpages"></a> `maxPages?` | `number` | `undefined` | Maximum number of pages to store in the data of an infinite query. |
+| <a id="options-property-meta"></a> `meta?` | `Record`\<`string`, `unknown`\> | `undefined` | Additional payload to be stored on each query. Use this property to pass information that can be used in other places. |
+| <a id="options-property-networkmode"></a> `networkMode?` | `"online"` \| `"always"` \| `"offlineFirst"` | `'online'` | Controls whether a query is allowed to run based on the current network connectivity. **See** [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information. |
+| <a id="options-property-notifyonchangeprops"></a> `notifyOnChangeProps?` | \| ( \| `"error"` \| `"data"` \| `"isError"` \| `"isPending"` \| `"isLoading"` \| `"isLoadingError"` \| `"isRefetchError"` \| `"isSuccess"` \| `"isPlaceholderData"` \| `"status"` \| `"dataUpdatedAt"` \| `"errorUpdatedAt"` \| `"failureCount"` \| `"failureReason"` \| `"errorUpdateCount"` \| `"isFetched"` \| `"isFetchedAfterMount"` \| `"isFetching"` \| `"isInitialLoading"` \| `"isPaused"` \| `"isRefetching"` \| `"isStale"` \| `"isEnabled"` \| `"refetch"` \| `"fetchStatus"` \| `"fetchNextPage"` \| `"fetchPreviousPage"` \| `"hasNextPage"` \| `"hasPreviousPage"` \| `"isFetchNextPageError"` \| `"isFetchingNextPage"` \| `"isFetchPreviousPageError"` \| `"isFetchingPreviousPage"`)[] \| `"all"` \| (() => \| `"all"` \| ( \| `"error"` \| `"data"` \| `"isError"` \| `"isPending"` \| `"isLoading"` \| `"isLoadingError"` \| `"isRefetchError"` \| `"isSuccess"` \| `"isPlaceholderData"` \| `"status"` \| `"dataUpdatedAt"` \| `"errorUpdatedAt"` \| `"failureCount"` \| `"failureReason"` \| `"errorUpdateCount"` \| `"isFetched"` \| `"isFetchedAfterMount"` \| `"isFetching"` \| `"isInitialLoading"` \| `"isPaused"` \| `"isRefetching"` \| `"isStale"` \| `"isEnabled"` \| `"refetch"` \| `"fetchStatus"` \| `"fetchNextPage"` \| `"fetchPreviousPage"` \| `"hasNextPage"` \| `"hasPreviousPage"` \| `"isFetchNextPageError"` \| `"isFetchingNextPage"` \| `"isFetchPreviousPageError"` \| `"isFetchingPreviousPage"`)[] \| `undefined`) | `undefined` | If set, the component will only re-render if any of the listed properties change. When set to `['data', 'error']`, the component will only re-render when the `data` or `error` properties change. When set to `'all'`, the component will re-render whenever a query is updated. When set to a function, the function will be executed to compute the list of properties. Defaults to `undefined`, in which case property access is tracked automatically, and the component only re-renders when one of the tracked properties changes. |
+| <a id="options-property-persister"></a> `persister?` | (`queryFn`: (`context`: `object`) => `TQueryFnData` \| `Promise`\<`TQueryFnData`\>, `context`: `object`, `query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)) => `TQueryFnData` \| `Promise`\<`TQueryFnData`\> | `undefined` | This option can be used to persist the result of a query to an external storage, bypassing the need to actually call the `queryFn`. Useful for persisting a query's data across e.g. server/client boundaries. |
+| <a id="options-property-placeholderdata"></a> `placeholderData?` | \| `NonFunctionGuard`\<`TQueryFnData`\> \| ((`previousData`: `NonFunctionGuard`\<`TQueryFnData`\> \| `undefined`, `previousQuery`: \| [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`NonFunctionGuard`\<`TQueryFnData`\>, `TError`, `NonFunctionGuard`\<`TQueryFnData`\>, `TQueryKey`\> \| `undefined`) => `NonFunctionGuard`\<`TQueryFnData`\> \| `undefined`) | `undefined` | If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `loading` data and no initialData has been provided. |
+| <a id="options-property-queryfn"></a> `queryFn?` | \| *typeof* [`skipToken`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/variables/skipToken.md) \| ((`context`: `object`) => `TQueryFnData` \| `Promise`\<`TQueryFnData`\>) | `undefined` | The function that the query will use to request data. Required, unless a default query function has been set via `queryClient.setQueryDefaults` or `queryClient.setDefaultOptions`. Receives a [QueryFunctionContext](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/QueryFunctionContext.md). Must return a promise that will either resolve data or throw an error. The data cannot be `undefined`. |
+| <a id="options-property-queryhash"></a> `queryHash?` | `string` | `undefined` | The hashed form of `queryKey`, computed with `queryKeyHashFn` (or the default hashing function otherwise). Used as the actual cache key internally. |
+| <a id="options-property-querykey"></a> `queryKey` | `TQueryKey` & `object` | `undefined` | The query key to use for this query. The query key will be hashed into a stable hash. See [Query Keys](https://tanstack.com/query/latest/docs/framework/react/guides/query-keys) for more information. The query will automatically update when this key changes (as long as `enabled` is not set to `false`). |
+| <a id="options-property-querykeyhashfn"></a> `queryKeyHashFn?` | (`queryKey`: `TQueryKey`) => `string` | `undefined` | If specified, this function is used to hash the `queryKey` to a string. |
+| <a id="options-property-refetchinterval"></a> `refetchInterval?` | \| `number` \| `false` \| ((`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, `TQueryFnData`, `TQueryKey`\>) => `number` \| `false` \| `undefined`) | `false` | If set to a number, the query will continuously refetch at this frequency in milliseconds. If set to a function, the function will be executed with the latest data and query to compute a frequency |
+| <a id="options-property-refetchintervalinbackground"></a> `refetchIntervalInBackground?` | `boolean` | `false` | If set to `true`, the query will continue to refetch while their tab/window is in the background. |
+| <a id="options-property-refetchonmount"></a> `refetchOnMount?` | \| `boolean` \| `"always"` \| ((`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, `TQueryFnData`, `TQueryKey`\>) => `boolean` \| `"always"`) | `true` | If set to `true`, the query will refetch on mount if the data is stale. If set to `false`, will disable additional instances of a query to trigger background refetch. If set to `'always'`, the query will always refetch on mount (except when `staleTime: 'static'` is used). If set to a function, the function will be executed with the latest data and query to compute the value |
+| <a id="options-property-refetchonreconnect"></a> `refetchOnReconnect?` | \| `boolean` \| `"always"` \| ((`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, `TQueryFnData`, `TQueryKey`\>) => `boolean` \| `"always"`) | `undefined` | If set to `true`, the query will refetch on reconnect if the data is stale. If set to `false`, the query will not refetch on reconnect. If set to `'always'`, the query will always refetch on reconnect (except when `staleTime: 'static'` is used). If set to a function, the function will be executed with the latest data and query to compute the value. Defaults to `true` unless `networkMode` is `'always'`. |
+| <a id="options-property-refetchonwindowfocus"></a> `refetchOnWindowFocus?` | \| `boolean` \| `"always"` \| ((`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, `TQueryFnData`, `TQueryKey`\>) => `boolean` \| `"always"`) | `true` | If set to `true`, the query will refetch on window focus if the data is stale. If set to `false`, the query will not refetch on window focus. If set to `'always'`, the query will always refetch on window focus (except when `staleTime: 'static'` is used). If set to a function, the function will be executed with the latest data and query to compute the value. |
+| <a id="options-property-retry"></a> `retry?` | \| `number` \| `false` \| `true` \| ((`failureCount`: `number`, `error`: `TError`) => `boolean`) | `undefined` | If `false`, failed queries will not retry by default. If `true`, failed queries will retry infinitely. If set to an integer number, e.g. 3, failed queries will retry until the failed query count meets that number. If set to a function `(failureCount, error) => boolean` failed queries will retry until the function returns false. Defaults to `3` on the client and `0` on the server. |
+| <a id="options-property-retrydelay"></a> `retryDelay?` | `number` \| ((`failureCount`: `number`, `error`: `TError`) => `number`) | `undefined` | This function receives a `retryAttempt` integer and the actual Error and returns the delay to apply before the next attempt in milliseconds. A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff. A function like `attempt => attempt * 1000` applies linear backoff. Defaults to a function that applies exponential backoff, capped at 30 seconds. |
+| <a id="options-property-retryonmount"></a> `retryOnMount?` | \| `false` \| `true` \| ((`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, `TQueryFnData`, `TQueryKey`\>) => `boolean`) | `true` | If set to `false`, the query will not be retried on mount if it contains an error. If set to a function, the function will be executed with the query to compute the value. |
+| <a id="options-property-select"></a> `select?` | (`data`: `TQueryFnData`) => `TData` | `undefined` | This option can be used to transform or select a part of the data returned by the query function. It affects the returned `data` value, but does not affect what gets stored in the query cache. The `select` function will only run if `data` changed, or if the reference to the `select` function itself changes. To optimize, memoize the function so its reference stays stable across calls. |
+| <a id="options-property-staletime"></a> `staleTime?` | \| `number` \| `"static"` \| ((`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, `TQueryFnData`, `TQueryKey`\>) => `number` \| `"static"`) | `0` | The time in milliseconds after data is considered stale. If set to `Infinity`, the data will never be considered stale. If set to `'static'`, the data will never be considered stale. If set to a function, the function will be executed with the query to compute a `staleTime`. |
+| <a id="options-property-structuralsharing"></a> `structuralSharing?` | `boolean` \| ((`oldData`: `unknown`, `newData`: `unknown`) => `unknown`) | `true` | Set this to `false` to disable structural sharing between query results. Set this to a function which accepts the old and new data and returns resolved data of the same type to implement custom structural sharing logic. |
+| <a id="options-property-subscribed"></a> `subscribed?` | `boolean` | `true` | Set this to `false` to unsubscribe this observer from updates to the query cache. |
+| <a id="options-property-throwonerror"></a> `throwOnError?` | \| `false` \| `true` \| ((`error`: `TError`, `query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, `TQueryFnData`, `TQueryKey`\>) => `boolean`) | `false` | Whether errors should be thrown instead of setting the `error` property. If set to `true` or `suspense` is `true`, all errors will be thrown to the error boundary. If set to `false` and `suspense` is `false`, errors are returned as state. If set to a function, it will be passed the error and the query, and it should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`). |
+
+### queryClient?
+
+[`QueryClient`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryClient.md)
+
+Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
+be used.
+
+<a id="returns-summary"></a>
+
+## Returns
+
+[`UseQueryResult`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/UseQueryResult.md)\<`TData`, `TError`\>
+
+The current query result. `status` is `pending` if there is no cached data to display, `error` if
+the last fetch attempt failed, or `success` if the query has data to display. `isPending`/`isSuccess`/`isError`
+are derived booleans for convenience.
+
+<a id="result-properties"></a>
+
+### Result properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="result-property-data"></a> `data` | `TData` \| `undefined` | The last successfully resolved data for the query. |
+| <a id="result-property-dataupdatedat"></a> `dataUpdatedAt` | `number` | The timestamp for when the query most recently returned the `status` as `"success"`. |
+| <a id="result-property-error"></a> `error` | `TError` \| `null` | The error object for the query, if an error was thrown. - Defaults to `null`. |
+| <a id="result-property-errorupdatecount"></a> `errorUpdateCount` | `number` | The sum of all errors. |
+| <a id="result-property-errorupdatedat"></a> `errorUpdatedAt` | `number` | The timestamp for when the query most recently returned the `status` as `"error"`. |
+| <a id="result-property-failurecount"></a> `failureCount` | `number` | The failure count for the query. - Incremented every time the query fails. - Reset to `0` when the query succeeds. |
+| <a id="result-property-failurereason"></a> `failureReason` | `TError` \| `null` | The failure reason for the query retry. - Reset to `null` when the query succeeds. |
+| <a id="result-property-fetchstatus"></a> `fetchStatus` | `"fetching"` \| `"paused"` \| `"idle"` | The fetch status of the query. - `fetching`: Is `true` whenever the queryFn is executing, which includes initial `pending` as well as background refetch. - `paused`: The query wanted to fetch, but has been `paused`. - `idle`: The query is not fetching. - See [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information. |
+| <a id="result-property-isenabled"></a> `isEnabled` | `boolean` | `true` if this observer is enabled, `false` otherwise. |
+| <a id="result-property-iserror"></a> `isError` | `boolean` | A derived boolean from the `status` variable, provided for convenience. - `true` if the query attempt resulted in an error. |
+| <a id="result-property-isfetched"></a> `isFetched` | `boolean` | Will be `true` if the query has been fetched. |
+| <a id="result-property-isfetchedaftermount"></a> `isFetchedAfterMount` | `boolean` | Will be `true` if the query has been fetched after the component mounted. - This property can be used to not show any previously cached data. |
+| <a id="result-property-isfetching"></a> `isFetching` | `boolean` | A derived boolean from the `fetchStatus` variable, provided for convenience. - `true` whenever the `queryFn` is executing, which includes initial `pending` as well as background refetch. |
+| <a id="result-property-isinitialloading"></a> ~~`isInitialLoading`~~ | `boolean` | **Deprecated** `isInitialLoading` is being deprecated in favor of `isLoading` and will be removed in the next major version. |
+| <a id="result-property-isloading"></a> `isLoading` | `boolean` | Is `true` whenever the first fetch for a query is in-flight. - Is the same as `isFetching && isPending`. |
+| <a id="result-property-isloadingerror"></a> `isLoadingError` | `boolean` | Will be `true` if the query failed while fetching for the first time. |
+| <a id="result-property-ispaused"></a> `isPaused` | `boolean` | A derived boolean from the `fetchStatus` variable, provided for convenience. - The query wanted to fetch, but has been `paused`. |
+| <a id="result-property-ispending"></a> `isPending` | `boolean` | Will be `pending` if there's no cached data and no query attempt was finished yet. |
+| <a id="result-property-isplaceholderdata"></a> `isPlaceholderData` | `boolean` | Will be `true` if the data shown is the placeholder data. |
+| <a id="result-property-isrefetcherror"></a> `isRefetchError` | `boolean` | Will be `true` if the query failed while refetching. |
+| <a id="result-property-isrefetching"></a> `isRefetching` | `boolean` | Is `true` whenever a background refetch is in-flight, which _does not_ include initial `pending`. - Is the same as `isFetching && !isPending`. |
+| <a id="result-property-isstale"></a> `isStale` | `boolean` | Will be `true` if the data in the cache is invalidated or if the data is older than the given `staleTime`. |
+| <a id="result-property-issuccess"></a> `isSuccess` | `boolean` | A derived boolean from the `status` variable, provided for convenience. - `true` if the query has received a response with no errors and is ready to display its data. |
+| <a id="result-property-refetch"></a> `refetch` | (`options?`: [`RefetchOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/RefetchOptions.md)) => `Promise`\<[`QueryObserverResult`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/QueryObserverResult.md)\<`TData`, `TError`\>\> | A function to manually refetch the query. |
+| <a id="result-property-status"></a> `status` | `"error"` \| `"pending"` \| `"success"` | The status of the query. - Will be: - `pending` if there's no cached data and no query attempt was finished yet. - `error` if the query attempt resulted in an error. - `success` if the query has received a response with no errors and is ready to display its data. |
+
 ### docs/framework/react/reference/functions/useQueryClient.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/useQueryClient.md
 RAW_URL: https://raw.githubusercontent.com/TanStack/query/main/docs/framework/react/reference/functions/useQueryClient.md
@@ -18454,6 +19018,40 @@ Caveat: cancellation does not work.
 
 The [UseSuspenseInfiniteQueryOptions](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/UseSuspenseInfiniteQueryOptions.md) to use — the same options as `useInfiniteQuery`, minus the ones listed above.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+| Property | Type | Default value | Description |
+| ------ | ------ | ------ | ------ |
+| <a id="options-property-gctime"></a> `gcTime?` | `number` | `undefined` | The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration. When different garbage collection times are specified, the longest one will be used. Setting it to `Infinity` will disable garbage collection. Defaults to `5 * 60 * 1000` (5 minutes), or `Infinity` during SSR. Note: the maximum allowed time is about 24 days, imposed by `setTimeout`'s 32-bit signed integer delay — see `timeoutManager.setTimeoutProvider` for a workaround. |
+| <a id="options-property-getnextpageparam"></a> `getNextPageParam` | (`lastPage`: `TQueryFnData`, `allPages`: `TQueryFnData`[], `lastPageParam`: `TPageParam`, `allPageParams`: `TPageParam`[]) => `TPageParam` \| `null` \| `undefined` | `undefined` | This function can be set to automatically get the next cursor for infinite queries. The result will also be used to determine the value of `hasNextPage`. |
+| <a id="options-property-getpreviouspageparam"></a> `getPreviousPageParam?` | (`firstPage`: `TQueryFnData`, `allPages`: `TQueryFnData`[], `firstPageParam`: `TPageParam`, `allPageParams`: `TPageParam`[]) => `TPageParam` \| `null` \| `undefined` | `undefined` | This function can be set to automatically get the previous cursor for infinite queries. The result will also be used to determine the value of `hasPreviousPage`. |
+| <a id="options-property-initialdata"></a> `initialData?` | \| [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\> \| (() => \| [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\> \| `undefined`) | `undefined` | If set, this value will be used as the initial data for the query cache (as long as the query hasn't been created or cached yet). If set to a function, the function will be called **once** during the shared/root query initialization, and be expected to synchronously return the initial data. Initial data is considered stale by default unless a `staleTime` has been set. `initialData` **is persisted** to the cache. |
+| <a id="options-property-initialdataupdatedat"></a> `initialDataUpdatedAt?` | `number` \| (() => `number` \| `undefined`) | `undefined` | If set, this value will be used as the time (in milliseconds) of when the `initialData` itself was last updated. |
+| <a id="options-property-initialpageparam"></a> `initialPageParam` | `TPageParam` | `undefined` | The page param to start from when an infinite query has no pages yet. It is passed to `queryFn` as `pageParam` for the first page; every page after that gets the value returned by `getNextPageParam` or `getPreviousPageParam`. It only applies while the query has no pages: once a first page exists, refetching starts from that page's own param instead. |
+| <a id="options-property-maxpages"></a> `maxPages?` | `number` | `undefined` | Maximum number of pages to store in the data of an infinite query. |
+| <a id="options-property-meta"></a> `meta?` | `Record`\<`string`, `unknown`\> | `undefined` | Additional payload to be stored on each query. Use this property to pass information that can be used in other places. |
+| <a id="options-property-networkmode"></a> `networkMode?` | `"online"` \| `"always"` \| `"offlineFirst"` | `'online'` | Controls whether a query is allowed to run based on the current network connectivity. **See** [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information. |
+| <a id="options-property-notifyonchangeprops"></a> `notifyOnChangeProps?` | \| ( \| `"error"` \| `"data"` \| `"isError"` \| `"isPending"` \| `"isLoading"` \| `"isLoadingError"` \| `"isRefetchError"` \| `"isSuccess"` \| `"isPlaceholderData"` \| `"status"` \| `"dataUpdatedAt"` \| `"errorUpdatedAt"` \| `"failureCount"` \| `"failureReason"` \| `"errorUpdateCount"` \| `"isFetched"` \| `"isFetchedAfterMount"` \| `"isFetching"` \| `"isInitialLoading"` \| `"isPaused"` \| `"isRefetching"` \| `"isStale"` \| `"isEnabled"` \| `"refetch"` \| `"fetchStatus"` \| `"fetchNextPage"` \| `"fetchPreviousPage"` \| `"hasNextPage"` \| `"hasPreviousPage"` \| `"isFetchNextPageError"` \| `"isFetchingNextPage"` \| `"isFetchPreviousPageError"` \| `"isFetchingPreviousPage"`)[] \| `"all"` \| (() => \| `"all"` \| ( \| `"error"` \| `"data"` \| `"isError"` \| `"isPending"` \| `"isLoading"` \| `"isLoadingError"` \| `"isRefetchError"` \| `"isSuccess"` \| `"isPlaceholderData"` \| `"status"` \| `"dataUpdatedAt"` \| `"errorUpdatedAt"` \| `"failureCount"` \| `"failureReason"` \| `"errorUpdateCount"` \| `"isFetched"` \| `"isFetchedAfterMount"` \| `"isFetching"` \| `"isInitialLoading"` \| `"isPaused"` \| `"isRefetching"` \| `"isStale"` \| `"isEnabled"` \| `"refetch"` \| `"fetchStatus"` \| `"fetchNextPage"` \| `"fetchPreviousPage"` \| `"hasNextPage"` \| `"hasPreviousPage"` \| `"isFetchNextPageError"` \| `"isFetchingNextPage"` \| `"isFetchPreviousPageError"` \| `"isFetchingPreviousPage"`)[] \| `undefined`) | `undefined` | If set, the component will only re-render if any of the listed properties change. When set to `['data', 'error']`, the component will only re-render when the `data` or `error` properties change. When set to `'all'`, the component will re-render whenever a query is updated. When set to a function, the function will be executed to compute the list of properties. Defaults to `undefined`, in which case property access is tracked automatically, and the component only re-renders when one of the tracked properties changes. |
+| <a id="options-property-persister"></a> `persister?` | (`queryFn`: (`context`: [`QueryFunctionContext`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/QueryFunctionContext.md)\<`NoInfer`\<`TQueryKey`\>, `TPageParam`\>) => `TQueryFnData` \| `Promise`\<`TQueryFnData`\>, `context`: `object`, `query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)) => `TQueryFnData` \| `Promise`\<`TQueryFnData`\> | `undefined` | This option can be used to persist the result of a query to an external storage, bypassing the need to actually call the `queryFn`. Useful for persisting a query's data across e.g. server/client boundaries. |
+| <a id="options-property-queryfn"></a> `queryFn?` | (`context`: [`QueryFunctionContext`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/type-aliases/QueryFunctionContext.md)\<`TQueryKey`, `TPageParam`\>) => `TQueryFnData` \| `Promise`\<`TQueryFnData`\> | `undefined` | `skipToken` is not allowed here — Suspense hooks cannot render a "disabled" state, so a query function must always be provided, unless a default query function has been defined. |
+| <a id="options-property-queryhash"></a> `queryHash?` | `string` | `undefined` | The hashed form of `queryKey`, computed with `queryKeyHashFn` (or the default hashing function otherwise). Used as the actual cache key internally. |
+| <a id="options-property-querykey"></a> `queryKey` | `TQueryKey` & `object` | `undefined` | The query key to use for this query. The query key will be hashed into a stable hash. See [Query Keys](https://tanstack.com/query/latest/docs/framework/react/guides/query-keys) for more information. The query will automatically update when this key changes (as long as `enabled` is not set to `false`). |
+| <a id="options-property-querykeyhashfn"></a> `queryKeyHashFn?` | (`queryKey`: `TQueryKey`) => `string` | `undefined` | If specified, this function is used to hash the `queryKey` to a string. |
+| <a id="options-property-refetchinterval"></a> `refetchInterval?` | \| `number` \| `false` \| ((`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\>, `TQueryKey`\>) => `number` \| `false` \| `undefined`) | `false` | If set to a number, the query will continuously refetch at this frequency in milliseconds. If set to a function, the function will be executed with the latest data and query to compute a frequency |
+| <a id="options-property-refetchintervalinbackground"></a> `refetchIntervalInBackground?` | `boolean` | `false` | If set to `true`, the query will continue to refetch while their tab/window is in the background. |
+| <a id="options-property-refetchonmount"></a> `refetchOnMount?` | \| `boolean` \| `"always"` \| ((`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\>, `TQueryKey`\>) => `boolean` \| `"always"`) | `true` | If set to `true`, the query will refetch on mount if the data is stale. If set to `false`, will disable additional instances of a query to trigger background refetch. If set to `'always'`, the query will always refetch on mount (except when `staleTime: 'static'` is used). If set to a function, the function will be executed with the latest data and query to compute the value |
+| <a id="options-property-refetchonreconnect"></a> `refetchOnReconnect?` | \| `boolean` \| `"always"` \| ((`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\>, `TQueryKey`\>) => `boolean` \| `"always"`) | `undefined` | If set to `true`, the query will refetch on reconnect if the data is stale. If set to `false`, the query will not refetch on reconnect. If set to `'always'`, the query will always refetch on reconnect (except when `staleTime: 'static'` is used). If set to a function, the function will be executed with the latest data and query to compute the value. Defaults to `true` unless `networkMode` is `'always'`. |
+| <a id="options-property-refetchonwindowfocus"></a> `refetchOnWindowFocus?` | \| `boolean` \| `"always"` \| ((`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\>, `TQueryKey`\>) => `boolean` \| `"always"`) | `true` | If set to `true`, the query will refetch on window focus if the data is stale. If set to `false`, the query will not refetch on window focus. If set to `'always'`, the query will always refetch on window focus (except when `staleTime: 'static'` is used). If set to a function, the function will be executed with the latest data and query to compute the value. |
+| <a id="options-property-retry"></a> `retry?` | \| `number` \| `false` \| `true` \| ((`failureCount`: `number`, `error`: `TError`) => `boolean`) | `undefined` | If `false`, failed queries will not retry by default. If `true`, failed queries will retry infinitely. If set to an integer number, e.g. 3, failed queries will retry until the failed query count meets that number. If set to a function `(failureCount, error) => boolean` failed queries will retry until the function returns false. Defaults to `3` on the client and `0` on the server. |
+| <a id="options-property-retrydelay"></a> `retryDelay?` | `number` \| ((`failureCount`: `number`, `error`: `TError`) => `number`) | `undefined` | This function receives a `retryAttempt` integer and the actual Error and returns the delay to apply before the next attempt in milliseconds. A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff. A function like `attempt => attempt * 1000` applies linear backoff. Defaults to a function that applies exponential backoff, capped at 30 seconds. |
+| <a id="options-property-retryonmount"></a> `retryOnMount?` | \| `false` \| `true` \| ((`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\>, `TQueryKey`\>) => `boolean`) | `true` | If set to `false`, the query will not be retried on mount if it contains an error. If set to a function, the function will be executed with the query to compute the value. |
+| <a id="options-property-select"></a> `select?` | (`data`: [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)) => `TData` | `undefined` | This option can be used to transform or select a part of the data returned by the query function. It affects the returned `data` value, but does not affect what gets stored in the query cache. The `select` function will only run if `data` changed, or if the reference to the `select` function itself changes. To optimize, memoize the function so its reference stays stable across calls. |
+| <a id="options-property-staletime"></a> `staleTime?` | \| `number` \| `"static"` \| ((`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, [`InfiniteData`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteData.md)\<`TQueryFnData`, `TPageParam`\>, `TQueryKey`\>) => `number` \| `"static"`) | `0` | The time in milliseconds after data is considered stale. If set to `Infinity`, the data will never be considered stale. If set to `'static'`, the data will never be considered stale. If set to a function, the function will be executed with the query to compute a `staleTime`. |
+| <a id="options-property-structuralsharing"></a> `structuralSharing?` | `boolean` \| ((`oldData`: `unknown`, `newData`: `unknown`) => `unknown`) | `true` | Set this to `false` to disable structural sharing between query results. Set this to a function which accepts the old and new data and returns resolved data of the same type to implement custom structural sharing logic. |
+| <a id="options-property-subscribed"></a> `subscribed?` | `boolean` | `true` | Set this to `false` to unsubscribe this observer from updates to the query cache. |
+
 ### queryClient?
 
 [`QueryClient`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryClient.md)
@@ -18468,6 +19066,12 @@ be used.
 The same object as `useInfiniteQuery`, except that `data` is guaranteed to be defined,
 `isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived flags set
 accordingly).
+
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`InfiniteQueryObserverBaseResult`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteQueryObserverBaseResult.md#properties). See the type above for what it changes.
 
 ## Remarks
 
@@ -18559,6 +19163,20 @@ title: useSuspenseQueries
 redirect_from:
   - framework/react/reference/useSuspenseQueries
 ---
+
+## Overview
+
+```ts
+function useSuspenseQueries<T, TCombinedResult>(options: object, queryClient?: QueryClient): TCombinedResult;
+function useSuspenseQueries<T, TCombinedResult>(options: object, queryClient?: QueryClient): TCombinedResult;
+```
+
+- [`{ queries, combine }` → `TCombinedResult`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/useSuspenseQueries.md#call-signature-1): The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed` option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
+- [`{ queries, combine }` → `TCombinedResult`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/useSuspenseQueries.md#call-signature-2): The options for `useSuspenseQueries` are the same as for `useQueries`, except that the top-level `subscribed` option isn't supported, and each `query` can't have `throwOnError`, `enabled`, or `placeholderData`.
+
+See also: [Parameters](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/useSuspenseQueries.md#parameters-summary) · [Returns](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/useSuspenseQueries.md#returns-summary)
+
+<a id="call-signature-1"></a>
 
 ## Call Signature
 
@@ -18770,6 +19388,8 @@ function App() {
 }
 ```
 
+<a id="call-signature-2"></a>
+
 ## Call Signature
 
 ```ts
@@ -18934,6 +19554,48 @@ function App() {
 }
 ```
 
+<a id="parameters-summary"></a>
+
+## Parameters
+
+### options
+
+The `queries` array to run in Suspense, and an optional `combine` function.
+
+#### combine?
+
+(`result`: `T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetUseSuspenseQueryResult`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...Tails[]`\] *extends* \[`Head`\] ? \[`GetUseSuspenseQueryResult`\<`Head`\>, `GetUseSuspenseQueryResult`\<`Head`\>\] : \[`...Tails[]`\] *extends* \[`Head`, `...Tails[]`\] ? \[`...(...)[]`\] *extends* \[\] ? \[\] : ... *extends* ... ? ... : ... : \[`...{ [K in (...)]: (...) }[]`\] : \{ \[K in string \| number \| symbol\]: GetUseSuspenseQueryResult\<T\[K\]\> \}) => `TCombinedResult`
+
+Use this to combine the results of the queries into a single value. The result will be structurally
+shared to be as referentially stable as possible.
+
+#### queries
+
+readonly \[`T` *extends* \[\] ? \[\] : `T` *extends* \[`Head`\] ? \[`GetUseSuspenseQueryOptions`\<`Head`\>\] : `T` *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...Tails[]`\] *extends* \[`Head`\] ? \[`GetUseSuspenseQueryOptions`\<`Head`\>, `GetUseSuspenseQueryOptions`\<`Head`\>\] : \[`...Tails[]`\] *extends* \[`Head`, `...Tails[]`\] ? \[`...Tails[]`\] *extends* \[\] ? \[\] : \[`...(...)[]`\] *extends* \[...\] ? \[..., ..., ...\] : ... *extends* ... ? ... : ... : `unknown`[] *extends* \[`...Tails[]`\] ? \[`...Tails[]`\] : \[`...(...)[]`\] *extends* ...[] ? ...[] : ...[] : `unknown`[] *extends* `T` ? `T` : `T` *extends* [`UseSuspenseQueryOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/UseSuspenseQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>[] ? [`UseSuspenseQueryOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/UseSuspenseQueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\>[] : [`UseSuspenseQueryOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/UseSuspenseQueryOptions.md)\<`unknown`, `Error`, `unknown`, readonly `unknown`[]\>[]\]
+
+An array with query option objects identical to `useSuspenseQuery`.
+
+### queryClient?
+
+[`QueryClient`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryClient.md)
+
+Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
+will be used.
+
+<a id="returns-summary"></a>
+
+## Returns
+
+`TCombinedResult`
+
+The same structure as `useQueries`, except that for each `query`, `data` is guaranteed to be
+defined, `isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived
+flags set accordingly).
+
+Caveat: the component will only re-mount after all queries have finished loading. Hence, if a query has gone
+stale in the time it took for all the queries to complete, it will be fetched again at re-mount. To avoid
+this, make sure to set a high enough `staleTime`. Cancellation does not work.
+
 ### docs/framework/react/reference/functions/useSuspenseQuery.md
 SOURCE_URL: https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/useSuspenseQuery.md
 RAW_URL: https://raw.githubusercontent.com/TanStack/query/main/docs/framework/react/reference/functions/useSuspenseQuery.md
@@ -18982,6 +19644,37 @@ Caveat: cancellation does not work.
 
 The [UseSuspenseQueryOptions](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/UseSuspenseQueryOptions.md) to use — the same options as `useQuery`, minus the ones listed above.
 
+<a id="options-properties"></a>
+
+#### `options` properties
+
+| Property | Type | Default value | Description |
+| ------ | ------ | ------ | ------ |
+| <a id="options-property-gctime"></a> `gcTime?` | `number` | `undefined` | The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration. When different garbage collection times are specified, the longest one will be used. Setting it to `Infinity` will disable garbage collection. Defaults to `5 * 60 * 1000` (5 minutes), or `Infinity` during SSR. Note: the maximum allowed time is about 24 days, imposed by `setTimeout`'s 32-bit signed integer delay — see `timeoutManager.setTimeoutProvider` for a workaround. |
+| <a id="options-property-initialdata"></a> `initialData?` | `TQueryFnData` \| (() => `TQueryFnData` \| `undefined`) | `undefined` | If set, this value will be used as the initial data for the query cache (as long as the query hasn't been created or cached yet). If set to a function, the function will be called **once** during the shared/root query initialization, and be expected to synchronously return the initial data. Initial data is considered stale by default unless a `staleTime` has been set. `initialData` **is persisted** to the cache. |
+| <a id="options-property-initialdataupdatedat"></a> `initialDataUpdatedAt?` | `number` \| (() => `number` \| `undefined`) | `undefined` | If set, this value will be used as the time (in milliseconds) of when the `initialData` itself was last updated. |
+| <a id="options-property-maxpages"></a> `maxPages?` | `number` | `undefined` | Maximum number of pages to store in the data of an infinite query. |
+| <a id="options-property-meta"></a> `meta?` | `Record`\<`string`, `unknown`\> | `undefined` | Additional payload to be stored on each query. Use this property to pass information that can be used in other places. |
+| <a id="options-property-networkmode"></a> `networkMode?` | `"online"` \| `"always"` \| `"offlineFirst"` | `'online'` | Controls whether a query is allowed to run based on the current network connectivity. **See** [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information. |
+| <a id="options-property-notifyonchangeprops"></a> `notifyOnChangeProps?` | \| ( \| `"error"` \| `"data"` \| `"isError"` \| `"isPending"` \| `"isLoading"` \| `"isLoadingError"` \| `"isRefetchError"` \| `"isSuccess"` \| `"isPlaceholderData"` \| `"status"` \| `"dataUpdatedAt"` \| `"errorUpdatedAt"` \| `"failureCount"` \| `"failureReason"` \| `"errorUpdateCount"` \| `"isFetched"` \| `"isFetchedAfterMount"` \| `"isFetching"` \| `"isInitialLoading"` \| `"isPaused"` \| `"isRefetching"` \| `"isStale"` \| `"isEnabled"` \| `"refetch"` \| `"fetchStatus"` \| `"fetchNextPage"` \| `"fetchPreviousPage"` \| `"hasNextPage"` \| `"hasPreviousPage"` \| `"isFetchNextPageError"` \| `"isFetchingNextPage"` \| `"isFetchPreviousPageError"` \| `"isFetchingPreviousPage"`)[] \| `"all"` \| (() => \| `"all"` \| ( \| `"error"` \| `"data"` \| `"isError"` \| `"isPending"` \| `"isLoading"` \| `"isLoadingError"` \| `"isRefetchError"` \| `"isSuccess"` \| `"isPlaceholderData"` \| `"status"` \| `"dataUpdatedAt"` \| `"errorUpdatedAt"` \| `"failureCount"` \| `"failureReason"` \| `"errorUpdateCount"` \| `"isFetched"` \| `"isFetchedAfterMount"` \| `"isFetching"` \| `"isInitialLoading"` \| `"isPaused"` \| `"isRefetching"` \| `"isStale"` \| `"isEnabled"` \| `"refetch"` \| `"fetchStatus"` \| `"fetchNextPage"` \| `"fetchPreviousPage"` \| `"hasNextPage"` \| `"hasPreviousPage"` \| `"isFetchNextPageError"` \| `"isFetchingNextPage"` \| `"isFetchPreviousPageError"` \| `"isFetchingPreviousPage"`)[] \| `undefined`) | `undefined` | If set, the component will only re-render if any of the listed properties change. When set to `['data', 'error']`, the component will only re-render when the `data` or `error` properties change. When set to `'all'`, the component will re-render whenever a query is updated. When set to a function, the function will be executed to compute the list of properties. Defaults to `undefined`, in which case property access is tracked automatically, and the component only re-renders when one of the tracked properties changes. |
+| <a id="options-property-persister"></a> `persister?` | (`queryFn`: (`context`: `object`) => `TQueryFnData` \| `Promise`\<`TQueryFnData`\>, `context`: `object`, `query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)) => `TQueryFnData` \| `Promise`\<`TQueryFnData`\> | `undefined` | This option can be used to persist the result of a query to an external storage, bypassing the need to actually call the `queryFn`. Useful for persisting a query's data across e.g. server/client boundaries. |
+| <a id="options-property-queryfn"></a> `queryFn?` | (`context`: `object`) => `TQueryFnData` \| `Promise`\<`TQueryFnData`\> | `undefined` | `skipToken` is not allowed here — Suspense hooks cannot render a "disabled" state, so a query function must always be provided, unless a default query function has been defined. |
+| <a id="options-property-queryhash"></a> `queryHash?` | `string` | `undefined` | The hashed form of `queryKey`, computed with `queryKeyHashFn` (or the default hashing function otherwise). Used as the actual cache key internally. |
+| <a id="options-property-querykey"></a> `queryKey` | `TQueryKey` & `object` | `undefined` | The query key to use for this query. The query key will be hashed into a stable hash. See [Query Keys](https://tanstack.com/query/latest/docs/framework/react/guides/query-keys) for more information. The query will automatically update when this key changes (as long as `enabled` is not set to `false`). |
+| <a id="options-property-querykeyhashfn"></a> `queryKeyHashFn?` | (`queryKey`: `TQueryKey`) => `string` | `undefined` | If specified, this function is used to hash the `queryKey` to a string. |
+| <a id="options-property-refetchinterval"></a> `refetchInterval?` | \| `number` \| `false` \| ((`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, `TQueryFnData`, `TQueryKey`\>) => `number` \| `false` \| `undefined`) | `false` | If set to a number, the query will continuously refetch at this frequency in milliseconds. If set to a function, the function will be executed with the latest data and query to compute a frequency |
+| <a id="options-property-refetchintervalinbackground"></a> `refetchIntervalInBackground?` | `boolean` | `false` | If set to `true`, the query will continue to refetch while their tab/window is in the background. |
+| <a id="options-property-refetchonmount"></a> `refetchOnMount?` | \| `boolean` \| `"always"` \| ((`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, `TQueryFnData`, `TQueryKey`\>) => `boolean` \| `"always"`) | `true` | If set to `true`, the query will refetch on mount if the data is stale. If set to `false`, will disable additional instances of a query to trigger background refetch. If set to `'always'`, the query will always refetch on mount (except when `staleTime: 'static'` is used). If set to a function, the function will be executed with the latest data and query to compute the value |
+| <a id="options-property-refetchonreconnect"></a> `refetchOnReconnect?` | \| `boolean` \| `"always"` \| ((`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, `TQueryFnData`, `TQueryKey`\>) => `boolean` \| `"always"`) | `undefined` | If set to `true`, the query will refetch on reconnect if the data is stale. If set to `false`, the query will not refetch on reconnect. If set to `'always'`, the query will always refetch on reconnect (except when `staleTime: 'static'` is used). If set to a function, the function will be executed with the latest data and query to compute the value. Defaults to `true` unless `networkMode` is `'always'`. |
+| <a id="options-property-refetchonwindowfocus"></a> `refetchOnWindowFocus?` | \| `boolean` \| `"always"` \| ((`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, `TQueryFnData`, `TQueryKey`\>) => `boolean` \| `"always"`) | `true` | If set to `true`, the query will refetch on window focus if the data is stale. If set to `false`, the query will not refetch on window focus. If set to `'always'`, the query will always refetch on window focus (except when `staleTime: 'static'` is used). If set to a function, the function will be executed with the latest data and query to compute the value. |
+| <a id="options-property-retry"></a> `retry?` | \| `number` \| `false` \| `true` \| ((`failureCount`: `number`, `error`: `TError`) => `boolean`) | `undefined` | If `false`, failed queries will not retry by default. If `true`, failed queries will retry infinitely. If set to an integer number, e.g. 3, failed queries will retry until the failed query count meets that number. If set to a function `(failureCount, error) => boolean` failed queries will retry until the function returns false. Defaults to `3` on the client and `0` on the server. |
+| <a id="options-property-retrydelay"></a> `retryDelay?` | `number` \| ((`failureCount`: `number`, `error`: `TError`) => `number`) | `undefined` | This function receives a `retryAttempt` integer and the actual Error and returns the delay to apply before the next attempt in milliseconds. A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff. A function like `attempt => attempt * 1000` applies linear backoff. Defaults to a function that applies exponential backoff, capped at 30 seconds. |
+| <a id="options-property-retryonmount"></a> `retryOnMount?` | \| `false` \| `true` \| ((`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, `TQueryFnData`, `TQueryKey`\>) => `boolean`) | `true` | If set to `false`, the query will not be retried on mount if it contains an error. If set to a function, the function will be executed with the query to compute the value. |
+| <a id="options-property-select"></a> `select?` | (`data`: `TQueryFnData`) => `TData` | `undefined` | This option can be used to transform or select a part of the data returned by the query function. It affects the returned `data` value, but does not affect what gets stored in the query cache. The `select` function will only run if `data` changed, or if the reference to the `select` function itself changes. To optimize, memoize the function so its reference stays stable across calls. |
+| <a id="options-property-staletime"></a> `staleTime?` | \| `number` \| `"static"` \| ((`query`: [`Query`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/Query.md)\<`TQueryFnData`, `TError`, `TQueryFnData`, `TQueryKey`\>) => `number` \| `"static"`) | `0` | The time in milliseconds after data is considered stale. If set to `Infinity`, the data will never be considered stale. If set to `'static'`, the data will never be considered stale. If set to a function, the function will be executed with the query to compute a `staleTime`. |
+| <a id="options-property-structuralsharing"></a> `structuralSharing?` | `boolean` \| ((`oldData`: `unknown`, `newData`: `unknown`) => `unknown`) | `true` | Set this to `false` to disable structural sharing between query results. Set this to a function which accepts the old and new data and returns resolved data of the same type to implement custom structural sharing logic. |
+| <a id="options-property-subscribed"></a> `subscribed?` | `boolean` | `true` | Set this to `false` to unsubscribe this observer from updates to the query cache. |
+
 ### queryClient?
 
 [`QueryClient`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryClient.md)
@@ -18995,6 +19688,12 @@ be used.
 
 The same object as `useQuery`, except that `data` is guaranteed to be defined, `isPlaceholderData`
 is missing, and `status` is either `success` or `error` (with the derived flags set accordingly).
+
+<a id="result-properties"></a>
+
+### Result properties
+
+Built from [`QueryObserverBaseResult`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/QueryObserverBaseResult.md#properties). See the type above for what it changes.
 
 ## Remarks
 
