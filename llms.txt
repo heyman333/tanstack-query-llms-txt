@@ -4497,7 +4497,7 @@ This is a technical limitation. When persisting to an external storage, only the
 [//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/mutations.md# 'Example11'
 
 ```tsx
-const persister = createSyncStoragePersister({
+const persister = createAsyncStoragePersister({
   storage: window.localStorage,
 })
 const queryClient = new QueryClient({
@@ -7455,7 +7455,18 @@ import {
 } from '@tanstack/react-query'
 
 export default function MyApp({ Component, pageProps }) {
-  const [queryClient] = React.useState(() => new QueryClient())
+  const [queryClient] = React.useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            // With SSR, we usually want to set some default staleTime
+            // above 0 to avoid refetching immediately on the client
+            staleTime: 60 * 1000,
+          },
+        },
+      }),
+  )
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -9407,6 +9418,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
+import { createRoot } from 'react-dom/client'
 import { getTodos, postTodo } from '../my-api'
 
 // Create a client
@@ -9459,7 +9471,7 @@ function Todos() {
   )
 }
 
-render(<App />, document.getElementById('root'))
+createRoot(document.getElementById('root')).render(<App />)
 ```
 
 [//]: https://github.com/TanStack/query/blob/main/docs/framework/react/quick-start.md# 'Example'
