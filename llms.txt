@@ -420,25 +420,25 @@ When you begin your React Query journey, you'll want these devtools by your side
 
 The devtools are a separate package that you need to install:
 
-```bash
+```sh
 npm i @tanstack/react-query-devtools
 ```
 
 or
 
-```bash
+```sh
 pnpm add @tanstack/react-query-devtools
 ```
 
 or
 
-```bash
+```sh
 yarn add @tanstack/react-query-devtools
 ```
 
 or
 
-```bash
+```sh
 bun add @tanstack/react-query-devtools
 ```
 
@@ -7873,17 +7873,14 @@ React Query works by means of hooks - either the ones we offer or custom ones th
 
 [//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/testing.md# 'Install'
 
-With React 17 or earlier, writing unit tests for these custom hooks can be done by means of the [React Hooks Testing Library](https://react-hooks-testing-library.com/) library.
+Writing unit tests for these custom hooks can be done by means of the [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/), which provides `renderHook` and re-exports the `@testing-library/dom` helpers such as `waitFor`.
 
 Install this by running:
 
 ```sh
-npm install @testing-library/react-hooks react-test-renderer --save-dev
+npm install @testing-library/react @testing-library/dom --save-dev
 ```
 
-(The `react-test-renderer` library is needed as a peer dependency of `@testing-library/react-hooks`, and needs to correspond to the version of React that you are using.)
-
-_Note_: when using React 18 or later, `renderHook` is available directly through the `@testing-library/react` package, and `@testing-library/react-hooks` is no longer required.
 [//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/testing.md# 'Install'
 
 ## Our First Test
@@ -7983,7 +7980,7 @@ expect(result.current.data).toEqual({ answer: 42 })
 
 [//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/testing.md# 'NoteWaitFor1'
 
-Here we are making use of `waitFor` and waiting until the query status indicates that the request has succeeded. This way we know that our hook has finished and should have the correct data. _Note_: when using React 18, the semantics of `waitFor` have changed as noted above.
+Here we are making use of `waitFor` and waiting until the query status indicates that the request has succeeded. This way we know that our hook has finished and should have the correct data.
 [//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/testing.md# 'NoteWaitFor1'
 
 ## Testing Load More / Infinite Scroll
@@ -8000,17 +7997,17 @@ function generateMockedResponse(page) {
 ```
 
 Then, our `nock` configuration needs to differentiate responses based on the page, and we'll be using `uri` to do this.
-`uri`'s value here will be something like `"/?page=1` or `/?page=2`
+`uri`'s value here will be something like `/api/data?page=1` or `/api/data?page=2`
 
 ```tsx
 const expectation = nock('http://example.com')
   .persist()
-  .query(true)
   .get('/api/data')
+  .query(true)
   .reply(200, (uri) => {
     const url = new URL(`http://example.com${uri}`)
     const { page } = Object.fromEntries(url.searchParams)
-    return generateMockedResponse(page)
+    return generateMockedResponse(Number(page))
   })
 ```
 
@@ -8025,14 +8022,14 @@ const { result } = renderHook(() => useInfiniteQueryCustomHook(), {
 
 await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-expect(result.current.data.pages).toStrictEqual(generateMockedResponse(1))
+expect(result.current.data.pages).toStrictEqual([generateMockedResponse(1)])
 
 result.current.fetchNextPage()
 
 await waitFor(() =>
   expect(result.current.data.pages).toStrictEqual([
-    ...generateMockedResponse(1),
-    ...generateMockedResponse(2),
+    generateMockedResponse(1),
+    generateMockedResponse(2),
   ]),
 )
 
@@ -8040,8 +8037,6 @@ expectation.done()
 ```
 
 [//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/testing.md# 'NoteWaitFor2'
-
-_Note_: when using React 18, the semantics of `waitFor` have changed as noted above.
 [//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/testing.md# 'NoteWaitFor2'
 
 ## Further reading
@@ -8272,31 +8267,31 @@ or a good ol' `<script>` via
 
 ### NPM
 
-```bash
+```sh
 npm i @tanstack/react-query
 ```
 
 or
 
-```bash
+```sh
 pnpm add @tanstack/react-query
 ```
 
 or
 
-```bash
+```sh
 yarn add @tanstack/react-query
 ```
 
 or
 
-```bash
+```sh
 bun add @tanstack/react-query
 ```
 
 or
 
-```bash
+```sh
 deno add @tanstack/react-query
 ```
 
@@ -8345,25 +8340,25 @@ Opera >= 77
 
 It is recommended to also use our [ESLint Plugin Query](https://github.com/TanStack/query/blob/main/docs/eslint/eslint-plugin-query.md) to help you catch bugs and inconsistencies while you code. You can install it via:
 
-```bash
+```sh
 npm i -D @tanstack/eslint-plugin-query
 ```
 
 or
 
-```bash
+```sh
 pnpm add -D @tanstack/eslint-plugin-query
 ```
 
 or
 
-```bash
+```sh
 yarn add -D @tanstack/eslint-plugin-query
 ```
 
 or
 
-```bash
+```sh
 bun add -D @tanstack/eslint-plugin-query
 ```
 
@@ -8598,25 +8593,25 @@ title: createAsyncStoragePersister
 
 This utility comes as a separate package and is available under the `'@tanstack/query-async-storage-persister'` import.
 
-```bash
+```sh
 npm install @tanstack/query-async-storage-persister @tanstack/react-query-persist-client
 ```
 
 or
 
-```bash
+```sh
 pnpm add @tanstack/query-async-storage-persister @tanstack/react-query-persist-client
 ```
 
 or
 
-```bash
+```sh
 yarn add @tanstack/query-async-storage-persister @tanstack/react-query-persist-client
 ```
 
 or
 
-```bash
+```sh
 bun add @tanstack/query-async-storage-persister @tanstack/react-query-persist-client
 ```
 
@@ -8725,25 +8720,25 @@ title: experimental_createQueryPersister
 
 This utility comes as a separate package and is available under the `'@tanstack/query-persist-client-core'` import.
 
-```bash
+```sh
 npm install @tanstack/query-persist-client-core
 ```
 
 or
 
-```bash
+```sh
 pnpm add @tanstack/query-persist-client-core
 ```
 
 or
 
-```bash
+```sh
 yarn add @tanstack/query-persist-client-core
 ```
 
 or
 
-```bash
+```sh
 bun add @tanstack/query-persist-client-core
 ```
 
@@ -8953,25 +8948,25 @@ You can simply use ['@tanstack/query-async-storage-persister'](https://github.co
 
 This utility comes as a separate package and is available under the `'@tanstack/query-sync-storage-persister'` import.
 
-```bash
+```sh
 npm install @tanstack/query-sync-storage-persister @tanstack/react-query-persist-client
 ```
 
 or
 
-```bash
+```sh
 pnpm add @tanstack/query-sync-storage-persister @tanstack/react-query-persist-client
 ```
 
 or
 
-```bash
+```sh
 yarn add @tanstack/query-sync-storage-persister @tanstack/react-query-persist-client
 ```
 
 or
 
-```bash
+```sh
 bun add @tanstack/query-sync-storage-persister @tanstack/react-query-persist-client
 ```
 
