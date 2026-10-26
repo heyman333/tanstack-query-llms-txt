@@ -1919,7 +1919,7 @@ Out of the box, TanStack Query is configured with **aggressive but sane** defaul
 - Query results that have no more active instances of `useQuery`, `useInfiniteQuery` or query observers are labeled as "inactive" and remain in the cache in case they are used again at a later time.
 - By default, "inactive" queries are garbage collected after **5 minutes**.
 
-  > To change this, you can alter the default `gcTime` for queries to something other than `1000 * 60 * 5` milliseconds.
+  > To change this, you can alter the default `gcTime` for queries to something other than `5 * 60 * 1000` milliseconds.
 
 - Queries that fail are **silently retried 3 times, with exponential backoff delay** before capturing and displaying an error to the UI.
 
@@ -3264,7 +3264,7 @@ queryClient.refetchQueries({ queryKey: ['todos'] })
 queryClient.refetchQueries({ queryKey: ['todos'] })
 ```
 
-You can opt-out of this behaviour by explicitly passing `cancelRefetch:false`:
+You can opt-out of this behavior by explicitly passing `cancelRefetch:false`:
 
 ```
 queryClient.refetchQueries({ queryKey: ['todos'] })
@@ -3272,7 +3272,7 @@ queryClient.refetchQueries({ queryKey: ['todos'] })
 queryClient.refetchQueries({ queryKey: ['todos'] }, { cancelRefetch: false })
 ```
 
-> Note: There is no change in behaviour for automatically triggered fetches, e.g. because a query mounts or because of a window focus refetch.
+> Note: There is no change in behavior for automatically triggered fetches, e.g. because a query mounts or because of a window focus refetch.
 
 ### Query Filters
 
@@ -3800,7 +3800,7 @@ Almost everyone gets `cacheTime` wrong. It sounds like "the amount of time that 
 `gc` is referring to "garbage collect" time. It's a bit more technical, but also a quite [well known abbreviation](https://github.com/TanStack/query/blob/main/docs/framework/react/guides/%3Chttps://en.wikipedia.org/wiki/Garbage_collection_(computer_science)>) in computer science.
 
 ```tsx
-const MINUTE = 1000 * 60;
+const MINUTE = 60 * 1000;
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -3872,7 +3872,7 @@ An identity function, in the context of TanStack Query, refers to a function tha
 useQuery({
   queryKey,
   queryFn,
-  placeholderData: (previousData, previousQuery) => previousData, // identity function with the same behaviour as `keepPreviousData`
+  placeholderData: (previousData, previousQuery) => previousData, // identity function with the same behavior as `keepPreviousData`
 })
 ```
 
@@ -3938,7 +3938,7 @@ The v5 includes a new `maxPages` option for infinite queries to limit the number
 
 ### New `dehydrate` API
 
-The options you can pass to `dehydrate` have been simplified. Queries and Mutations are always dehydrated (according to the default function implementation). To change this behaviour, instead of using the removed boolean options `dehydrateMutations` and `dehydrateQueries` you can implement the function equivalents `shouldDehydrateQuery` or `shouldDehydrateMutation` instead. To get the old behaviour of not hydrating queries/mutations at all, pass in `() => false`.
+The options you can pass to `dehydrate` have been simplified. Queries and Mutations are always dehydrated (according to the default function implementation). To change this behavior, instead of using the removed boolean options `dehydrateMutations` and `dehydrateQueries` you can implement the function equivalents `shouldDehydrateQuery` or `shouldDehydrateMutation` instead. To get the old behavior of not hydrating queries/mutations at all, pass in `() => false`.
 
 ```tsx
 - dehydrateMutations?: boolean // [!code --]
@@ -4048,16 +4048,16 @@ For example:
 ```ts
 + queryClient.setQueryDefaults(['todo'], {   // [!code ++]
 +   retry: false,  // [!code ++]
-+   staleTime: 60_000,  // [!code ++]
++   staleTime: 60 * 1000,  // [!code ++]
 + })  // [!code ++]
 queryClient.setQueryDefaults(['todo', 'detail'], {
 +   retry: true,  // [!code --]
-  retryDelay: 1_000,
-  staleTime: 10_000,
+  retryDelay: 1000,
+  staleTime: 10 * 1000,
 })
 - queryClient.setQueryDefaults(['todo'], { // [!code --]
 -   retry: false, // [!code --]
--   staleTime: 60_000, // [!code --]
+-   staleTime: 60 * 1000, // [!code --]
 - }) // [!code --]
 ```
 
@@ -4509,7 +4509,7 @@ const persister = createAsyncStoragePersister({
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 60 * 60 * 24, // 24 hours
+      gcTime: 24 * 60 * 60 * 1000, // 24 hours
     },
   },
 })
@@ -5109,7 +5109,7 @@ title: Polling
 useQuery({
   queryKey: ['prices'],
   queryFn: fetchPrices,
-  refetchInterval: 5_000, // every 5 seconds
+  refetchInterval: 5 * 1000, // every 5 seconds
 })
 ```
 
@@ -5130,7 +5130,7 @@ useQuery({
   refetchInterval: (query) => {
     // Stop polling once the job finishes
     if (query.state.data?.status === 'complete') return false
-    return 2_000
+    return 2 * 1000
   },
 })
 ```
@@ -5149,7 +5149,7 @@ By default, polling pauses when the browser tab loses focus. For dashboards or a
 useQuery({
   queryKey: ['portfolio'],
   queryFn: fetchPortfolio,
-  refetchInterval: 30_000,
+  refetchInterval: 30 * 1000,
   refetchIntervalInBackground: true,
 })
 ```
@@ -5168,7 +5168,7 @@ useQuery({
   queryFn: () => fetchPrice(tokenAddress),
   refetchInterval: () => {
     if (!tokenAddress || isPaused) return false
-    return 15_000
+    return 15 * 1000
   },
 })
 ```
@@ -5185,7 +5185,7 @@ TanStack Query detects connectivity by listening to the browser's `online` and `
 useQuery({
   queryKey: ['chainStatus'],
   queryFn: fetchChainStatus,
-  refetchInterval: 10_000,
+  refetchInterval: 10 * 1000,
   networkMode: 'always',
 })
 ```
@@ -5196,7 +5196,7 @@ For more on network modes, see [Network Mode](https://github.com/TanStack/query/
 
 ## Note on deduplication
 
-Each `QueryObserver` (each component using `useQuery` with `refetchInterval`) runs its own timer. Two components subscribed to the same key with `refetchInterval: 5000` each fire their timer every 5 seconds. What gets deduplicated is concurrent in-flight fetches: if two timers fire at the same time, only one network request goes out. The timers are observer-level; the deduplication is query-level.
+Each `QueryObserver` (each component using `useQuery` with `refetchInterval`) runs its own timer. Two components subscribed to the same key with `refetchInterval: 5 * 1000` each fire their timer every 5 seconds. What gets deduplicated is concurrent in-flight fetches: if two timers fire at the same time, only one network request goes out. The timers are observer-level; the deduplication is query-level.
 
 [//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/polling.md# 'ReactNative'
 
@@ -5243,7 +5243,7 @@ Prefetching a query uses the `query` method. This method by default will
 For prefetching you often want to modify these defaults:
 
 - Out of the box, `query` uses the default `staleTime` configured for the `queryClient` to determine whether existing data in the cache is fresh or needs to be fetched again
-- You can also pass a specific `staleTime` like this: `query({ queryKey: ['todos'], queryFn: fn, staleTime: 5000 })`
+- You can also pass a specific `staleTime` like this: `query({ queryKey: ['todos'], queryFn: fn, staleTime: 5 * 1000 })`
   - This `staleTime` is only used for that query fetch, you still need to set it for any `useQuery` call as well
   - If you want to always return data if it's available in the cache regardless of the default `staleTime`, you can pass `"static"` in for `staleTime`.
   - Tip: If you are prefetching on the server, set a default `staleTime` higher than `0` for that `queryClient` to avoid having to pass in a specific `staleTime` to each prefetch call
@@ -5310,7 +5310,7 @@ function ShowDetailsButton() {
       queryFn: getDetailsData,
       // Prefetch only fires when data is older than the staleTime,
       // so in a case like this you definitely want to set one
-      staleTime: 60000,
+      staleTime: 60 * 1000,
     }).catch(noop)
   }
 
@@ -8632,7 +8632,7 @@ import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persi
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 60 * 60 * 24, // 24 hours
+      gcTime: 24 * 60 * 60 * 1000, // 24 hours
     },
   },
 })
@@ -8765,13 +8765,13 @@ import { experimental_createQueryPersister } from '@tanstack/query-persist-clien
 
 const persister = experimental_createQueryPersister({
   storage: AsyncStorage,
-  maxAge: 1000 * 60 * 60 * 12, // 12 hours
+  maxAge: 12 * 60 * 60 * 1000, // 12 hours
 })
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 30, // 30 seconds
+      gcTime: 30 * 1000, // 30 seconds
       persister: persister.persisterFn,
     },
   },
@@ -8794,7 +8794,7 @@ This utility might be used along `setQueryData` to persist optimistic update to 
 ```tsx
 const persister = experimental_createQueryPersister({
   storage: AsyncStorage,
-  maxAge: 1000 * 60 * 60 * 12, // 12 hours
+  maxAge: 12 * 60 * 60 * 1000, // 12 hours
 })
 
 const queryClient = useQueryClient()
@@ -8923,7 +8923,7 @@ The default options are:
 ```tsx
 {
   prefix = 'tanstack-query',
-  maxAge = 1000 * 60 * 60 * 24,
+  maxAge = 24 * 60 * 60 * 1000,
   serialize = JSON.stringify,
   deserialize = JSON.parse,
   refetchOnRestore = true,
@@ -8983,7 +8983,7 @@ import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persist
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 60 * 60 * 24, // 24 hours
+      gcTime: 24 * 60 * 60 * 1000, // 24 hours
     },
   },
 })
@@ -9128,7 +9128,7 @@ Due to a JavaScript limitation, the maximum allowed `gcTime` is about [24 days](
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 60 * 60 * 24, // 24 hours
+      gcTime: 24 * 60 * 60 * 1000, // 24 hours
     },
   },
 })
@@ -9200,7 +9200,7 @@ You can use this to restore the cache at moment(s) you choose.
 persistQueryClientRestore({
   queryClient,
   persister,
-  maxAge = 1000 * 60 * 60 * 24, // 24 hours
+  maxAge = 24 * 60 * 60 * 1000, // 24 hours
   buster = '',
   hydrateOptions = undefined,
 })
@@ -9219,7 +9219,7 @@ This functionality is preserved from version 3.x.
 persistQueryClient({
   queryClient,
   persister,
-  maxAge = 1000 * 60 * 60 * 24, // 24 hours
+  maxAge = 24 * 60 * 60 * 1000, // 24 hours
   buster = '',
   hydrateOptions = undefined,
   dehydrateOptions = undefined,
@@ -9290,7 +9290,7 @@ import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persi
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 60 * 60 * 24, // 24 hours
+      gcTime: 24 * 60 * 60 * 1000, // 24 hours
     },
   },
 })
@@ -9528,16 +9528,16 @@ import { onlineManager } from '@tanstack/react-query'
 import * as Network from 'expo-network'
 
 onlineManager.setEventListener((setOnline) => {
-  let initialised = false
+  let initialized = false
 
   const eventSubscription = Network.addNetworkStateListener((state) => {
-    initialised = true
+    initialized = true
     setOnline(!!state.isConnected)
   })
 
   Network.getNetworkStateAsync()
     .then((state) => {
-      if (!initialised) {
+      if (!initialized) {
         setOnline(!!state.isConnected)
       }
     })
@@ -12087,7 +12087,7 @@ The time, in milliseconds, after which data is considered stale, or
 #### Example
 
 ```ts
-const isStale = query.isStaleByTime(1000 * 60)
+const isStale = query.isStaleByTime(60 * 1000)
 ```
 
 ***
