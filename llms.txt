@@ -1237,7 +1237,7 @@ export default function Posts() {
 
 Now, your `getPosts` function can return e.g. `Temporal` datetime objects and the data will be serialized and deserialized on the client, assuming your transformer can serialize and deserialize those data types.
 
-For more information, check out the [Next.js App with Prefetching Example](https://github.com/TanStack/query/blob/main/docs/framework/react/examples/nextjs-app-prefetching).
+For more information, check out the [Next.js App with Prefetching Example](https://github.com/TanStack/query/blob/main/docs/framework/react/examples/prefetching-nextjs-app-router).
 
 ### Using the Persist Adapter with Streaming
 
@@ -1323,7 +1323,7 @@ export function Providers(props: { children: React.ReactNode }) {
 }
 ```
 
-For more information, check out the [NextJs Suspense Streaming Example](https://github.com/TanStack/query/blob/main/docs/framework/react/examples/nextjs-suspense-streaming).
+For more information, check out the [NextJs Suspense Streaming Example](https://github.com/TanStack/query/blob/main/docs/framework/react/examples/suspense-streaming-nextjs-app-router).
 
 The big upside is that you no longer need to prefetch queries manually to have SSR work, and it even still streams in the result! This gives you phenomenal DX and lower code complexity.
 
@@ -7104,7 +7104,7 @@ title: Scroll Restoration
 
 Traditionally, when you navigate to a previously visited page on a web browser, you would find that the page would be scrolled to the exact position where you were before you navigated away from that page. This is called **scroll restoration** and has been in a bit of a regression since web applications have started moving towards client side data fetching. With TanStack Query however, that's no longer the case.
 
-TanStack Query doesn’t implement scroll restoration by itself, but it removes one of the biggest causes of broken restoration in SPA’s: refetch-induced UI resets. By keeping previously fetched data in cache (and optionally using `placeholderData`), navigation back to a page can render instantly with stable layout, making scroll restoration reliable when handled by the router (e.g. React Router’s ScrollRestoration, TanStack Router’s scroll restoration, or a small custom history-based solution).
+TanStack Query doesn’t implement scroll restoration by itself, but it removes one of the biggest causes of broken restoration in SPA’s: refetch-induced UI resets. By keeping previously fetched data in cache (and optionally using `placeholderData`), navigation back to a page can render instantly with stable layout, making scroll restoration reliable when handled by the router (e.g. TanStack Router’s scroll restoration, React Router’s ScrollRestoration, or a small custom history-based solution).
 
 Out of the box, "scroll restoration" for all queries (including paginated and infinite queries) Just Works™️ in TanStack Query. The reason for this is that query results are cached and able to be retrieved synchronously when a query is rendered. As long as your queries are being cached long enough (the default time is 5 minutes) and have not been garbage collected, scroll restoration will work out of the box all the time.
 
@@ -7888,7 +7888,7 @@ export function Providers(props: { children: React.ReactNode }) {
 }
 ```
 
-For more information, check out the [NextJs Suspense Streaming Example](https://github.com/TanStack/query/blob/main/docs/framework/react/examples/nextjs-suspense-streaming) and the [Advanced Rendering & Hydration](https://github.com/TanStack/query/blob/main/docs/framework/react/guides/advanced-ssr.md) guide.
+For more information, check out the [NextJs Suspense Streaming Example](https://github.com/TanStack/query/blob/main/docs/framework/react/examples/suspense-streaming-nextjs-app-router) and the [Advanced Rendering & Hydration](https://github.com/TanStack/query/blob/main/docs/framework/react/guides/advanced-ssr.md) guide.
 [//]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/suspense.md# 'Streaming'
 
 ### docs/framework/react/guides/testing.md
@@ -22416,8 +22416,8 @@ The options of a `QueryObserver`, and of the hooks built on it like `useQuery`: 
 
 ## Extended by
 
-- [`InfiniteQueryObserverOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteQueryObserverOptions.md)
 - [`UseBaseQueryOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/UseBaseQueryOptions.md)
+- [`InfiniteQueryObserverOptions`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/interfaces/InfiniteQueryObserverOptions.md)
 
 ## Type Parameters
 
