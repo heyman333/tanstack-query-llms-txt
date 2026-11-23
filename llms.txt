@@ -7680,15 +7680,40 @@ This refetching of stale queries is a perfect match when caching markup in a CDN
 
 ### High memory consumption on server
 
-In case you are creating the `QueryClient` for every request, React Query creates the isolated cache for this client, which is preserved in memory for the `gcTime` period. That may lead to high memory consumption on server in case of high number of requests during that period.
+On the server, `gcTime` defaults to `Infinity`. With `Infinity`, no garbage collection timer is scheduled, and the cache is freed from memory together with the `QueryClient` once the request finishes.
 
-On the server, `gcTime` defaults to `Infinity` which disables manual garbage collection and will automatically clear memory once a request has finished. If you are explicitly setting a non-Infinity `gcTime` then you will be responsible for clearing the cache early.
+Any finite `gcTime` schedules a timer for each query, and that timer keeps the query in memory until it fires. In Node.js, a timer also keeps alive the [`AsyncLocalStorage`](https://nodejs.org/api/async_context.html#class-asynclocalstorage) context it was created in, and frameworks like Next.js store the whole request in that context. So with a finite `gcTime`, the request stays in memory even after the response is sent, until the timer fires.
 
-Avoid setting `gcTime` to `0` as it may result in a hydration error. This occurs because the [Hydration Boundary](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/HydrationBoundary.md) places necessary data into the cache for rendering, but if the garbage collector removes the data before the rendering completes, issues may arise. If you require a shorter `gcTime`, we recommend setting it to `2 * 1000` to allow sufficient time for the app to reference the data.
+This is easy to miss: a `gcTime` set in `defaultOptions` applies on the server too, so a value intended for the client also replaces `Infinity` on the server.
 
-To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryClient.md#clear) after the request is handled and dehydrated state has been sent to the client.
+```tsx
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // This also applies on the server
+      gcTime: 1000 * 60,
+    },
+  },
+})
+```
 
-Alternatively, you can set a smaller `gcTime`.
+If you only want a custom `gcTime` in the browser, keep `Infinity` on the server:
+
+```tsx
+import { environmentManager, QueryClient } from '@tanstack/react-query'
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      gcTime: environmentManager.isServer() ? Infinity : 1000 * 60,
+    },
+  },
+})
+```
+
+Avoid setting `gcTime` to `0` as it may result in a hydration error. This occurs because the [Hydration Boundary](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/HydrationBoundary.md) places necessary data into the cache for rendering, but if the garbage collector removes the data before the rendering completes, issues may arise. Short finite values have the same risk: a prefetched query that finishes early can be removed once its `gcTime` passes, while a slower query is still being prefetched and before `dehydrate` runs. Keep `Infinity` on the server where you can.
+
+If you set a finite `gcTime` on the server, call [`queryClient.clear()`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryClient.md#clear) once you no longer need the client and all of its queries have settled, for example after you have dehydrated or rendered with it. This removes every query from the cache and cancels its pending timer. A fetch that is still in flight when you call `clear()` schedules a new timer once it settles, so wait for pending fetches to settle first.
 
 ### Caveat for Next.js rewrites
 
@@ -11420,7 +11445,7 @@ Subscribable<QueriesObserverListener>.constructor
 destroy(): void;
 ```
 
-Defined in: [packages/query-core/src/queriesObserver.ts:114](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L114)
+Defined in: [packages/query-core/src/queriesObserver.ts:110](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L110)
 
 Stops observing all queries: clears all listeners and destroys every
 underlying `QueryObserver` this observer manages.
@@ -11437,7 +11462,7 @@ underlying `QueryObserver` this observer manages.
 getCurrentResult(): QueryObserverResult[];
 ```
 
-Defined in: [packages/query-core/src/queriesObserver.ts:219](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L219)
+Defined in: [packages/query-core/src/queriesObserver.ts:213](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L213)
 
 Returns the most recently computed array of `QueryObserverResult`s, one
 per observed query, in the same order as the queries passed to the
@@ -11464,7 +11489,7 @@ const data = results.map((result) => result.data)
 getObservers(): QueryObserver<unknown, Error, unknown, unknown, readonly unknown[]>[];
 ```
 
-Defined in: [packages/query-core/src/queriesObserver.ts:238](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L238)
+Defined in: [packages/query-core/src/queriesObserver.ts:232](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L232)
 
 Returns the underlying `QueryObserver` instances this observer manages,
 in the same order as the queries passed to the constructor or
@@ -11484,7 +11509,7 @@ The managed query observers.
 getOptimisticResult(queries: QueryObserverOptions<unknown, Error, unknown, unknown, readonly unknown[], never>[], combine: CombineFn<TCombinedResult> | undefined): [rawResult: QueryObserverResult[], combineResult: (r?: QueryObserverResult[]) => TCombinedResult, trackResult: () => QueryObserverResult[]];
 ```
 
-Defined in: [packages/query-core/src/queriesObserver.ts:255](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L255)
+Defined in: [packages/query-core/src/queriesObserver.ts:249](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L249)
 
 The `QueriesObserver` counterpart of [QueryObserver#getOptimisticResult](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryObserver.md#getoptimisticresult) — computes
 the result for the given (already-defaulted) queries right now, synchronously. Called by
@@ -11523,7 +11548,7 @@ function that returns the results wrapped for property-access tracking.
 getQueries(): Query<unknown, Error, unknown, readonly unknown[]>[];
 ```
 
-Defined in: [packages/query-core/src/queriesObserver.ts:228](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L228)
+Defined in: [packages/query-core/src/queriesObserver.ts:222](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L222)
 
 Returns the underlying `Query` instances currently being observed, in
 the same order as the queries passed to the constructor or `setQueries`.
@@ -11566,7 +11591,7 @@ Subscribable.hasListeners
 setQueries(queries: QueryObserverOptions<unknown, Error, unknown, unknown, readonly unknown[], never>[], options?: QueriesObserverOptions<TCombinedResult>): void;
 ```
 
-Defined in: [packages/query-core/src/queriesObserver.ts:136](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L136)
+Defined in: [packages/query-core/src/queriesObserver.ts:132](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L132)
 
 Replaces the set of queries being observed. Existing `QueryObserver`s
 are reused for queries that match an already-observed query hash;
@@ -15757,7 +15782,7 @@ title: keepPreviousData
 function keepPreviousData<T>(previousData: T | undefined): T | undefined;
 ```
 
-Defined in: [packages/query-core/src/utils.ts:582](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L582)
+Defined in: [packages/query-core/src/utils.ts:586](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L586)
 
 Intended to be passed as a query's `placeholderData` option, for example
 `placeholderData: keepPreviousData`. Instead of resetting the query's data to `undefined` while a new
@@ -16677,7 +16702,7 @@ function replaceEqualDeep<T>(
 ): T;
 ```
 
-Defined in: [packages/query-core/src/utils.ts:388](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L388)
+Defined in: [packages/query-core/src/utils.ts:392](https://github.com/TanStack/query/blob/main/packages/query-core/src/utils.ts#L392)
 
 This function returns `a` if `b` is deeply equal.
 If not, it will replace any deeply equal children of `b` with those of `a`.
