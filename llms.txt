@@ -7713,7 +7713,7 @@ const queryClient = new QueryClient({
 
 Avoid setting `gcTime` to `0` as it may result in a hydration error. This occurs because the [Hydration Boundary](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/functions/HydrationBoundary.md) places necessary data into the cache for rendering, but if the garbage collector removes the data before the rendering completes, issues may arise. Short finite values have the same risk: a prefetched query that finishes early can be removed once its `gcTime` passes, while a slower query is still being prefetched and before `dehydrate` runs. Keep `Infinity` on the server where you can.
 
-If you set a finite `gcTime` on the server, call [`queryClient.clear()`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryClient.md#clear) once you no longer need the client and all of its queries have settled, for example after you have dehydrated or rendered with it. This removes every query from the cache and cancels its pending timer. A fetch that is still in flight when you call `clear()` schedules a new timer once it settles, so wait for pending fetches to settle first.
+If you set a finite `gcTime` on the server, call [`queryClient.clear()`](https://github.com/TanStack/query/blob/main/docs/framework/react/reference/classes/QueryClient.md#clear) once you no longer need the client, for example after you have dehydrated or rendered with it. This removes every query from the cache and cancels its pending fetch and garbage collection timer.
 
 ### Caveat for Next.js rewrites
 
@@ -10648,7 +10648,7 @@ The mutation's `meta`, or `undefined` if none was set.
 continue(): Promise<unknown>;
 ```
 
-Defined in: [packages/query-core/src/mutation.ts:260](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L260)
+Defined in: [packages/query-core/src/mutation.ts:263](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L263)
 
 Resumes a mutation that is currently paused or was restored from a
 dehydrated, still-`pending` state.
@@ -10712,7 +10712,7 @@ Removable.destroy
 execute(variables: TVariables): Promise<TData>;
 ```
 
-Defined in: [packages/query-core/src/mutation.ts:301](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L301)
+Defined in: [packages/query-core/src/mutation.ts:304](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L304)
 
 Runs the mutation function for the given variables through a retryer, and
 drives the mutation's state and lifecycle callbacks through to settlement.
@@ -10838,9 +10838,10 @@ Defined in: [packages/query-core/src/mutationCache.ts:128](https://github.com/Ta
 clear(): void;
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:262](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L262)
+Defined in: [packages/query-core/src/mutationCache.ts:274](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L274)
 
-Removes all mutations from the cache.
+Removes all mutations and clears their garbage collection timers.
+Mutations that are already running continue to execute.
 
 #### Returns
 
@@ -10864,7 +10865,7 @@ find<TData = unknown, TError = Error, TVariables = any, TOnMutateResult = unknow
   | undefined;
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:306](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L306)
+Defined in: [packages/query-core/src/mutationCache.ts:319](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L319)
 
 A slightly more advanced method that can be used to get an existing mutation instance from
 the cache. If the mutation does not exist, `undefined` is returned.
@@ -10925,7 +10926,7 @@ const mutation = mutationCache.find({ mutationKey: ['addPost'] })
 findAll(filters?: MutationFilters): Mutation<unknown, Error, unknown, unknown>[];
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:337](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L337)
+Defined in: [packages/query-core/src/mutationCache.ts:350](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L350)
 
 An even more advanced method that can be used to get existing mutation instances from the
 cache that match the given filters. If no mutations match, an empty array is returned.
@@ -10967,7 +10968,7 @@ const mutations = mutationCache.findAll({ mutationKey: ['addPost'] })
 getAll(): Mutation<unknown, Error, unknown, unknown>[];
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:286](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L286)
+Defined in: [packages/query-core/src/mutationCache.ts:299](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L299)
 
 Returns all mutations within the cache.
 
@@ -11901,8 +11902,8 @@ destroy(): void;
 
 Defined in: [packages/query-core/src/query.ts:441](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L441)
 
-Clears the query's garbage collection timeout and silently cancels any
-in-flight fetch. Called by `QueryCache` when the query is removed from
+Silently cancels any in-flight fetch, then clears the query's garbage
+collection timeout. Called by `QueryCache` when the query is removed from
 the cache.
 
 #### Returns
@@ -12795,9 +12796,11 @@ await queryClient.cancelQueries({ queryKey: ['posts'], exact: true })
 clear(): void;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:1173](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1173)
+Defined in: [packages/query-core/src/queryClient.ts:1175](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1175)
 
 Clears both the query cache and the mutation cache this client is connected to.
+This clears their garbage collection timers and cancels in-flight query fetches.
+Running mutations continue to execute.
 
 #### Returns
 
